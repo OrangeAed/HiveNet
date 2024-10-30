@@ -4,7 +4,7 @@ import com.bignerdranch.andriod.hivenet.dataclasses.HexSpace
 
 abstract class HivePiece(
     private val color: Boolean, // 0 for white, 1 for black
-    private val type: String,
+    private val type: HivePieceType,
     var isPlayed: Boolean = false,
     var x: Int? = null,
     var y: Int? = null
@@ -13,7 +13,7 @@ abstract class HivePiece(
         return color
     }
 
-    fun getType(): String {
+    fun getType(): HivePieceType {
         return type
     }
 
