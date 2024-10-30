@@ -8,14 +8,15 @@ class QueenBee(color: Boolean) : HivePiece(color, HivePieceType.QueenBee) {
         return arrayOf()
     }
 
-    override fun move(destination: HexSpace) {
-        // Implement logic for moving the Queen Bee
+    override fun canMove(destination: HexSpace): Boolean {
+        // Implement logic to check if Queen Bee can move to the destination
+        val touchingPieces = destination.getTouchingPieces()
+        return touchingPieces.any { it != null }
     }
 
-    override fun canMoveOrPlace(destination: HexSpace): Boolean {
-        // Implement logic to check if Queen Bee can move or be placed at the destination
+    override fun canPlace(destination: HexSpace): Boolean {
+        // Implement logic to check if Queen Bee can be placed at the destination
         val touchingPieces = destination.getTouchingPieces()
-        // Example rule: QueenBee can move or be placed if at least one touching piece is present
         return touchingPieces.any { it != null }
     }
 }

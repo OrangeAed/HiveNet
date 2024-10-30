@@ -6,8 +6,7 @@ abstract class HivePiece(
     private val color: Boolean, // 0 for white, 1 for black
     private val type: HivePieceType,
     var isPlayed: Boolean = false,
-    var x: Int? = null,
-    var y: Int? = null
+    var currentHexSpace: HexSpace? = null
 ) {
     fun getColor(): Boolean {
         return color
@@ -19,14 +18,24 @@ abstract class HivePiece(
 
     abstract fun getAvailableMoves(): Array<HexSpace>
 
-    abstract fun move(destination: HexSpace)
-
-    fun place(destination: HexSpace) {
-        destination.hivePiece = this
-        x = destination.x
-        y = destination.y
-        isPlayed = true
+    fun move(destination: HexSpace) {
+        currentHexSpace?.hivePiece = null
+        if (canMove(destination)) {
+            currentHexSpace?.hivePiece = null
+            destination.hivePiece = this
+            currentHexSpace = destination
+        }
     }
 
-    abstract fun canMoveOrPlace(destination: HexSpace): Boolean
+    fun place(destination: HexSpace) {
+        if (canPlace(destination)) {
+            destination.hivePiece = this
+            currentHexSpace = destination
+            isPlayed = true
+        }
+    }
+
+    abstract fun canMove(destination: HexSpace): Boolean
+
+    abstract fun canPlace(destination: HexSpace): Boolean
 }

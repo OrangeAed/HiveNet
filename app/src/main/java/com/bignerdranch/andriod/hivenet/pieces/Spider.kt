@@ -8,14 +8,15 @@ class Spider(color: Boolean) : HivePiece(color, HivePieceType.Spider) {
         return arrayOf()
     }
 
-    override fun move(destination: HexSpace) {
-        // Implement logic for moving the Spider
+    override fun canMove(destination: HexSpace): Boolean {
+        // Implement logic to check if Spider can move to the destination
+        val touchingPieces = destination.getTouchingPieces()
+        return touchingPieces.count { it != null } == 2
     }
 
-    override fun canMoveOrPlace(destination: HexSpace): Boolean {
-        // Implement logic to check if Spider can move or be placed at the destination
+    override fun canPlace(destination: HexSpace): Boolean {
+        // Implement logic to check if Spider can be placed at the destination
         val touchingPieces = destination.getTouchingPieces()
-        // Example rule: Spider can move or be placed if exactly two touching pieces are present
         return touchingPieces.count { it != null } == 2
     }
 }

@@ -8,14 +8,15 @@ class Grasshopper(color: Boolean) : HivePiece(color, HivePieceType.Grasshopper) 
         return arrayOf()
     }
 
-    override fun move(destination: HexSpace) {
-        // Implement logic for moving the Grasshopper
+    override fun canMove(destination: HexSpace): Boolean {
+        // Implement logic to check if Grasshopper can move to the destination
+        val touchingPieces = destination.getTouchingPieces()
+        return touchingPieces.any { it != null }
     }
 
-    override fun canMoveOrPlace(destination: HexSpace): Boolean {
-        // Implement logic to check if Grasshopper can move or be placed at the destination
+    override fun canPlace(destination: HexSpace): Boolean {
+        // Implement logic to check if Grasshopper can be placed at the destination
         val touchingPieces = destination.getTouchingPieces()
-        // Example rule: Grasshopper can move or be placed if at least one touching piece is present
         return touchingPieces.any { it != null }
     }
 }

@@ -8,14 +8,15 @@ class Beetle(color: Boolean) : HivePiece(color, HivePieceType.Beetle) {
         return arrayOf()
     }
 
-    override fun move(destination: HexSpace) {
-        // Implement logic for moving the Beetle
+    override fun canMove(destination: HexSpace): Boolean {
+        // Implement logic to check if Beetle can move to the destination
+        val touchingPieces = destination.getTouchingPieces()
+        return touchingPieces.any { it != null }
     }
 
-    override fun canMoveOrPlace(destination: HexSpace): Boolean {
-        // Implement logic to check if Beetle can move or be placed at the destination
+    override fun canPlace(destination: HexSpace): Boolean {
+        // Implement logic to check if Beetle can be placed at the destination
         val touchingPieces = destination.getTouchingPieces()
-        // Example rule: Beetle can move or be placed if at least one touching piece is present
         return touchingPieces.any { it != null }
     }
 }

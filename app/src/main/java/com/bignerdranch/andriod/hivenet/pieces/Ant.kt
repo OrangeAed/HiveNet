@@ -8,14 +8,15 @@ class Ant(color: Boolean) : HivePiece(color, HivePieceType.Ant) {
         return arrayOf()
     }
 
-    override fun move(destination: HexSpace) {
-        // Implement logic for moving the Ant
+    override fun canMove(destination: HexSpace): Boolean {
+        // Implement logic to check if Ant can move to the destination
+        val touchingPieces = destination.getTouchingPieces()
+        return touchingPieces.any { it != null }
     }
 
-    override fun canMoveOrPlace(destination: HexSpace): Boolean {
-        // Implement logic to check if Ant can move or be placed at the destination
+    override fun canPlace(destination: HexSpace): Boolean {
+        // Implement logic to check if Ant can be placed at the destination
         val touchingPieces = destination.getTouchingPieces()
-        // Example rule: Ant can move or be placed if at least one touching piece is present
         return touchingPieces.any { it != null }
     }
 }
