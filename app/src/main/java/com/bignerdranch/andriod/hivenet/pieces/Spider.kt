@@ -5,6 +5,9 @@ import com.bignerdranch.andriod.hivenet.dataclasses.HexSpace
 class Spider(color: Boolean) : HivePiece(color, HivePieceType.Spider) {
     override fun getAvailableMoves(): Array<HexSpace> {
         // Implement logic for Spider's available moves
+        if (!isPlayed) {
+            return arrayOf()
+        }
         return arrayOf()
     }
 

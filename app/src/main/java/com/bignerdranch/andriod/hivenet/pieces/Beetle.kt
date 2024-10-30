@@ -5,6 +5,9 @@ import com.bignerdranch.andriod.hivenet.dataclasses.HexSpace
 class Beetle(color: Boolean) : HivePiece(color, HivePieceType.Beetle) {
     override fun getAvailableMoves(): Array<HexSpace> {
         // Implement logic for Beetle's available moves
+        if (!isPlayed) {
+            return arrayOf()
+        }
         return arrayOf()
     }
 
