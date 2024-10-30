@@ -3,7 +3,9 @@ package com.bignerdranch.andriod.hivenet
 data class Board(
     val width: Int = 11,
     val height: Int = 11,
-    val hexSpaces: Array<Array<HexSpace?>> = Array(width) { x -> Array(height) { y -> null } }
+    val hexSpaces: Array<Array<HexSpace?>> = Array(width) { x -> Array(height) { y -> null } },
+    val player1: Player,
+    val player2: Player
 ) {
     init {
         for (x in 0 until width) {
