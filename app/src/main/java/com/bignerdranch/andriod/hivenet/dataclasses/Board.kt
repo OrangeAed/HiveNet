@@ -1,4 +1,4 @@
-package com.bignerdranch.andriod.hivenet
+package com.bignerdranch.andriod.hivenet.dataclasses
 
 data class Board(
     val width: Int = 11,
