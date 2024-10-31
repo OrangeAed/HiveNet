@@ -13,13 +13,11 @@ class Spider(color: Boolean) : HivePiece(color, HivePieceType.Spider) {
 
     override fun canMove(destination: HexSpace): Boolean {
         // Implement logic to check if Spider can move to the destination
-        val touchingPieces = destination.getTouchingPieces()
-        return touchingPieces.count { it != null } == 2
+        return true
     }
 
     override fun canPlace(destination: HexSpace): Boolean {
         // Implement logic to check if Spider can be placed at the destination
-        val touchingPieces = destination.getTouchingPieces()
-        return touchingPieces.count { it != null } == 2
+        return true
     }
 }

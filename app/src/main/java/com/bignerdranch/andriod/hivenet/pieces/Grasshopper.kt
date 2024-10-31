@@ -12,14 +12,10 @@ class Grasshopper(color: Boolean) : HivePiece(color, HivePieceType.Grasshopper) 
     }
 
     override fun canMove(destination: HexSpace): Boolean {
-        // Implement logic to check if Grasshopper can move to the destination
-        val touchingPieces = destination.getTouchingPieces()
-        return touchingPieces.any { it != null }
+        return true
     }
 
     override fun canPlace(destination: HexSpace): Boolean {
-        // Implement logic to check if Grasshopper can be placed at the destination
-        val touchingPieces = destination.getTouchingPieces()
-        return touchingPieces.any { it != null }
+        return true
     }
 }

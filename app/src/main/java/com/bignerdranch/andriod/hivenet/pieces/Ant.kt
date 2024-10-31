@@ -13,13 +13,11 @@ class Ant(color: Boolean) : HivePiece(color, HivePieceType.Ant) {
 
     override fun canMove(destination: HexSpace): Boolean {
         // Implement logic to check if Ant can move to the destination
-        val touchingPieces = destination.getTouchingPieces()
-        return touchingPieces.any { it != null }
+        return true
     }
 
     override fun canPlace(destination: HexSpace): Boolean {
         // Implement logic to check if Ant can be placed at the destination
-        val touchingPieces = destination.getTouchingPieces()
-        return touchingPieces.any { it != null }
+        return true
     }
 }

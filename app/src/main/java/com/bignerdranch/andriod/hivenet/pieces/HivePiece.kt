@@ -19,20 +19,9 @@ abstract class HivePiece(
     abstract fun getAvailableMoves(): Array<HexSpace>
 
     open fun move(destination: HexSpace) {
-        currentHexSpace?.hivePiece = null
-        if (canMove(destination)) {
-            currentHexSpace?.hivePiece = null
-            destination.hivePiece = this
-            currentHexSpace = destination
-        }
     }
 
     fun place(destination: HexSpace) {
-        if (canPlace(destination)) {
-            destination.hivePiece = this
-            currentHexSpace = destination
-            isPlayed = true
-        }
     }
 
     abstract fun canMove(destination: HexSpace): Boolean
