@@ -24,4 +24,14 @@ data class HexSpace(
         touchingPieces.add(bottomRight?.hivePiece)
         return touchingPieces
     }
+    fun getAdjacentSpaces(): List<HexSpace?> {
+        val adjacentSpaces = mutableListOf<HexSpace?>()
+        adjacentSpaces.add(top)
+        adjacentSpaces.add(bottom)
+        adjacentSpaces.add(topLeft)
+        adjacentSpaces.add(topRight)
+        adjacentSpaces.add(bottomLeft)
+        adjacentSpaces.add(bottomRight)
+        return adjacentSpaces
+    }
 }
