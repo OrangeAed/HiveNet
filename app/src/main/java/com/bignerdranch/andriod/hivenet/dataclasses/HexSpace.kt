@@ -12,7 +12,8 @@ data class HexSpace(
     var topLeft: HexSpace? = null,
     var topRight: HexSpace? = null,
     var bottomLeft: HexSpace? = null,
-    var bottomRight: HexSpace? = null
+    var bottomRight: HexSpace? = null,
+    var isSelected: Boolean = false
 ) {
     fun getTouchingPieces(): List<HivePiece?> {
         val touchingPieces = mutableListOf<HivePiece?>()

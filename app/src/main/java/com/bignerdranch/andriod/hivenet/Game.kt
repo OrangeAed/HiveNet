@@ -9,6 +9,7 @@ class Game {
     val whitePlayer: Player
     val blackPlayer: Player
     var iswhitePlayerTurn: Boolean
+    var totalPlayedPieces: Int = 0
 
     init {
         whitePlayer = Player(this, createPieces(isWhite = true), isWhite = true, isTurn = true)
@@ -36,5 +37,9 @@ class Game {
 
     private fun hasPlayerWon(player: Player): Boolean {
         return player.queenBee.isSurrounded()
+    }
+
+    private fun updateTotalPlayedPieces() {
+        totalPlayedPieces = whitePlayer.playedPieces.size + blackPlayer.playedPieces.size
     }
 }
