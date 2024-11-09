@@ -28,5 +28,13 @@ class Game {
         )
     }
 
+    private fun switchTurns() {
+        iswhitePlayerTurn = !iswhitePlayerTurn
+        whitePlayer.isTurn = !whitePlayer.isTurn
+        blackPlayer.isTurn = !blackPlayer.isTurn
+    }
 
+    private fun hasPlayerWon(player: Player): Boolean {
+        return player.queenBee.isSurrounded()
+    }
 }
