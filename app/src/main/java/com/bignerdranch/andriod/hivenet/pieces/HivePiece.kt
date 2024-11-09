@@ -25,6 +25,9 @@ abstract class HivePiece(
     }
 
     fun place(destination: HexSpace) {
+        currentHexSpace = destination
+        destination.hivePiece = this
+        isPlayed = true
     }
 
     abstract fun canMove(destination: HexSpace): Boolean
