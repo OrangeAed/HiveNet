@@ -19,6 +19,9 @@ abstract class HivePiece(
     abstract fun getAvailableMoves(): Array<HexSpace>
 
     open fun move(destination: HexSpace) {
+        currentHexSpace?.hivePiece = null
+        currentHexSpace = destination
+        destination.hivePiece = this
     }
 
     fun place(destination: HexSpace) {
