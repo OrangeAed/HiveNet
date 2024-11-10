@@ -1,7 +1,13 @@
 package com.bignerdranch.andriod.hivenet
 
+import MyReceiver
 import android.annotation.SuppressLint
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
@@ -22,6 +28,22 @@ class GameActivity : AppCompatActivity() {
     private var originalX = 0f
     private var originalY = 0f
     private lateinit var originalConstraints: ConstraintSet
+
+    private lateinit var service: ConnectionService
+    private var isBound = false
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            val localBinder = binder as ConnectionService.LocalBinder
+            service = localBinder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+        }
+    }
+    private lateinit var receiver: MyReceiver
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -66,6 +88,20 @@ class GameActivity : AppCompatActivity() {
                 releasedChild.requestLayout()
             }
         })
+    }
+    override fun onStart() {
+        super.onStart()
+        // Bind to the same ConnectionService instance
+        val intent = Intent(this, ConnectionService::class.java)
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (isBound) {
+            unbindService(serviceConnection)
+            isBound = false
+        }
     }
     override fun onTouchEvent(event: MotionEvent): Boolean {
         dragHelper.processTouchEvent(event)

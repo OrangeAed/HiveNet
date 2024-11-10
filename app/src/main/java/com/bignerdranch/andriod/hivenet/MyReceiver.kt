@@ -1,64 +1,74 @@
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.NetworkInfo
+import android.net.wifi.p2p.WifiP2pDevice
+import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
+import android.net.wifi.p2p.WifiP2pManager.EXTRA_WIFI_P2P_DEVICE
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import com.bignerdranch.andriod.hivenet.ConnectionService
+import com.bignerdranch.andriod.hivenet.ConnectionService.Companion.EXTRA_INFO
 import com.bignerdranch.andriod.hivenet.MainActivity
+import com.bignerdranch.andriod.hivenet.MainActivity.Companion.PERMISSION_REQUEST_CODE
 import com.bignerdranch.andriod.hivenet.R
 
 /**
  * A BroadcastReceiver that notifies of important Wi-Fi p2p events.
  */
 class MyReceiver(
-    private val manager: WifiP2pManager?,
-    private val channel: WifiP2pManager.Channel?,
-    private val activity: MainActivity
+    private val service: ConnectionService
 ) : BroadcastReceiver() {
-    private val TAG = "MyReceiver"
+    companion object {
+        private const val TAG = "MyReceiver"
+    }
+
 
     @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent) {
         val action: String = intent.action!!
         when (action) {
             WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION -> {
-                val state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1)
+                val state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, WifiP2pManager.WIFI_P2P_STATE_DISABLED)
                 if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                    Toast.makeText(activity, "Wi-Fi P2P is enabled", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Wi-Fi P2P is enabled", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(activity, "Wi-Fi P2P is disabled", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Wi-Fi P2P is disabled", Toast.LENGTH_SHORT).show()
                 }
             }
             WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
-                /*(activity.supportFragmentManager.findFragmentById(R.id.frag_list) as DeviceListFragment)
-                    .apply {
-                        updateThisDevice(
-                            intent.getParcelableExtra(
-                                WifiP2pManager.EXTRA_WIFI_P2P_DEVICE) as WifiP2pDevice
-                        )
-                    }*/
+                val device = intent.getParcelableExtra(EXTRA_WIFI_P2P_DEVICE, WifiP2pDevice::class.java)
+                // Update device details in the service if needed
+                service.updateDeviceInfo(device)
             }
             WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
-
-                // Request available peers from the wifi p2p manager. This is an
-                // asynchronous call and the calling activity is notified with a
-                // callback on PeerListListener.onPeersAvailable()
-                manager?.requestPeers(channel, activity.peerListListener)
-                Log.d(TAG, "P2P peers changed")
-
-
+                // Request available peers
+                if (service.hasRequiredPermissions()) {
+                    service.requestPeers()
+                }
             }
             WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
-                val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiP2pManager.EXTRA_NETWORK_INFO)
-                if (networkInfo?.isConnected == true) {
-                    manager?.requestConnectionInfo(channel) { info ->
-                        if (info.groupFormed && info.isGroupOwner) {
-                            activity.startServerSocket()
-                        } else if (info.groupFormed) {
-                            activity.startClientSocket(info.groupOwnerAddress)
-                        }
+                val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                val network = connectivityManager.activeNetwork
+                val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
+                val info: WifiP2pInfo? = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO, WifiP2pInfo::class.java)
+                if (info != null) {
+                    if (networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true &&
+                        networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                    ) {
+                        // Device is connected to the internet, notify the service
+                        service.onConnectionInfoAvailable(info)
+                    } else {
+                        // No internet connection, reset the connection in the service
+                        Log.d(TAG, "Not connected to a network")
+                        service.resetConnection()
                     }
                 }
             }

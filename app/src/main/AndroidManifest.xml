@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission
-        android:required="true"
         android:name="android.permission.ACCESS_FINE_LOCATION"
-        android:maxSdkVersion="32" />
+        android:required="true" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.ACCESS_WIFI_STATE"/>
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        android:required="true" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.CHANGE_WIFI_STATE"/>
+        android:name="android.permission.CHANGE_WIFI_STATE"
+        android:required="true" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.INTERNET"/>
+        android:name="android.permission.INTERNET"
+        android:required="true" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES"
+    <uses-permission
+        android:name="android.permission.NEARBY_WIFI_DEVICES"
         android:required="true"
         android:usesPermissionFlags="neverForLocation" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <application
 
+    <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -28,8 +29,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.HiveNet"
-        >
+        android:theme="@style/Theme.HiveNet">
+        <service
+            android:name=".ConnectionService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.NEARBY_WIFI_DEVICES"
+            android:process=":remote"
+            android:stopWithTask="false"/>
         <activity
             android:name=".GameActivity"
             android:exported="false" />
