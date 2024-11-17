@@ -32,5 +32,20 @@ abstract class HivePiece(
 
     abstract fun canMove(destination: HexSpace): Boolean
 
-    abstract fun canPlace(destination: HexSpace): Boolean
+    open fun canPlace(destination: HexSpace): Boolean {
+        // if there is already a piece in that space, return false
+        if (destination.hivePiece != null) {
+            return false
+        }
+        val touchingPieces = destination.getTouchingPieces()
+        // if there is a piece of the opposite color touching the destination, return false
+        if (touchingPieces.any { it?.hivePiece != null && it.hivePiece?.getColor() != this.color }) {
+            return false
+        }
+        // if there is a piece of the same color touching the destination, return true
+        return touchingPieces.any { it?.hivePiece != null }
+
+        // we do not need to check if the one hive rule is violated because of simple induction.
+        // If a board is valid before we  place a piece, it will be valid after we place the piece.
+    }
 }

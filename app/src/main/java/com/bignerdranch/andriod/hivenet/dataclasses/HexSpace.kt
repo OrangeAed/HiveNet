@@ -3,8 +3,8 @@ package com.bignerdranch.andriod.hivenet.dataclasses
 import com.bignerdranch.andriod.hivenet.pieces.HivePiece
 
 data class HexSpace(
-    val x: Int,
-    val y: Int,
+    val row: Int,
+    val col: Int,
     val board: Board,
     var hivePiece: HivePiece? = null,
     var top: HexSpace? = null,
@@ -15,25 +15,25 @@ data class HexSpace(
     var bottomRight: HexSpace? = null,
     var isSelected: Boolean = false
 ) {
-    fun getTouchingPieces(): List<HivePiece?> {
-        val touchingPieces = mutableListOf<HivePiece?>()
-        touchingPieces.add(top?.hivePiece)
-        touchingPieces.add(bottom?.hivePiece)
-        touchingPieces.add(topLeft?.hivePiece)
-        touchingPieces.add(topRight?.hivePiece)
-        touchingPieces.add(bottomLeft?.hivePiece)
-        touchingPieces.add(bottomRight?.hivePiece)
-        return touchingPieces
+    fun getTouchingPieces(): List<HivePiece> {
+        return listOfNotNull(
+            top?.hivePiece,
+            bottom?.hivePiece,
+            topLeft?.hivePiece,
+            topRight?.hivePiece,
+            bottomLeft?.hivePiece,
+            bottomRight?.hivePiece
+        )
     }
 
-    fun getAdjacentSpaces(): MutableList<HexSpace?> {
-        val adjacentSpaces = mutableListOf<HexSpace?>()
-        adjacentSpaces.add(top)
-        adjacentSpaces.add(bottom)
-        adjacentSpaces.add(topLeft)
-        adjacentSpaces.add(topRight)
-        adjacentSpaces.add(bottomLeft)
-        adjacentSpaces.add(bottomRight)
-        return adjacentSpaces
+    fun getAdjacentSpaces(): List<HexSpace> {
+        return listOfNotNull(
+            top,
+            bottom,
+            topLeft,
+            topRight,
+            bottomLeft,
+            bottomRight
+        )
     }
 }
