@@ -19,14 +19,16 @@ class Game {
         iswhitePlayerTurn = true
     }
 
-    private fun createPieces(isWhite: Boolean): List<HivePiece> {
-        return listOf(
-            QueenBee(isWhite),
-            Spider(isWhite), Spider(isWhite),
-            Beetle(isWhite), Beetle(isWhite),
-            Grasshopper(isWhite), Grasshopper(isWhite), Grasshopper(isWhite),
-            Ant(isWhite), Ant(isWhite), Ant(isWhite)
-        )
+    companion object {
+        fun createPieces(isWhite: Boolean): List<HivePiece> {
+            return listOf(
+                QueenBee(isWhite),
+                Spider(isWhite), Spider(isWhite),
+                Beetle(isWhite), Beetle(isWhite),
+                Grasshopper(isWhite), Grasshopper(isWhite), Grasshopper(isWhite),
+                Ant(isWhite), Ant(isWhite), Ant(isWhite)
+            )
+        }
     }
 
     private fun switchTurns() {
