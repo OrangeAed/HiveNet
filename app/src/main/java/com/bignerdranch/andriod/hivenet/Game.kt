@@ -5,19 +5,13 @@ import com.bignerdranch.andriod.hivenet.dataclasses.Player
 import com.bignerdranch.andriod.hivenet.pieces.*
 
 class Game {
-    val board: Board
-    val whitePlayer: Player
-    val blackPlayer: Player
-    var iswhitePlayerTurn: Boolean
-    var totalPlayedPieces: Int = 0
 
-    init {
-        whitePlayer = Player(this, createPieces(isWhite = true), isWhite = true, isTurn = true)
-        blackPlayer = Player(this, createPieces(isWhite = false), isWhite = false, isTurn = false)
-        board = Board(whitePlayer = whitePlayer, blackPlayer = blackPlayer)
-        
-        iswhitePlayerTurn = true
-    }
+    val whitePlayer: Player = Player(this, createPieces(isWhite = true), isWhite = true, isTurn = true)
+    val blackPlayer: Player = Player(this, createPieces(isWhite = false), isWhite = false, isTurn = false)
+    val board: Board = Board(whitePlayer = whitePlayer, blackPlayer = blackPlayer)
+    var isWhitePlayerTurn: Boolean = true
+    var totalPlayedPieces: Int = 0
+    var turnNumber: Int = 0
 
     companion object {
         fun createPieces(isWhite: Boolean): List<HivePiece> {
@@ -32,7 +26,13 @@ class Game {
     }
 
     private fun switchTurns() {
-        iswhitePlayerTurn = !iswhitePlayerTurn
+        if (hasPlayerWon(whitePlayer)) {
+            handlePlayerWon(whitePlayer)
+        } else if (hasPlayerWon(blackPlayer)) {
+            handlePlayerWon(blackPlayer)
+        }
+        turnNumber += 1
+        isWhitePlayerTurn = !isWhitePlayerTurn
         whitePlayer.isTurn = !whitePlayer.isTurn
         blackPlayer.isTurn = !blackPlayer.isTurn
     }
@@ -43,5 +43,12 @@ class Game {
 
     private fun updateTotalPlayedPieces() {
         totalPlayedPieces = whitePlayer.playedPieces.size + blackPlayer.playedPieces.size
+    }
+
+    private fun handlePlayerWon(player: Player) {
+        // replace this with better logic later
+        if (hasPlayerWon(player)) {
+            println("Player has won!")
+        }
     }
 }
