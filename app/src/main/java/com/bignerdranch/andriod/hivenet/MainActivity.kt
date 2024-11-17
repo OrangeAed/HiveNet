@@ -43,7 +43,25 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var service: ConnectionService
-    private val receiver: BroadcastReceiver = MyReceiver(service)
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            if (binder is ConnectionService.LocalBinder) {
+                service = binder.getService()
+                isBound = true
+                receiver = MyReceiver(service)
+                registerReceiver(
+                    receiver,
+                    IntentFilter(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
+                )
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+            unregisterReceiver(receiver)
+        }
+    }
+    private lateinit var receiver: BroadcastReceiver
 
     private var isBound = false
     private val intentFilter = IntentFilter().apply {
@@ -52,17 +70,7 @@ class MainActivity : AppCompatActivity() {
         addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
         addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
     }
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            val localBinder = binder as ConnectionService.LocalBinder
-            service = localBinder.getService()
-            isBound = true
-        }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-        }
-    }
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         }
         val filter = IntentFilter(ConnectionService.ACTION_REQUEST_PERMISSIONS)
         registerReceiver(permissionReceiver, filter, RECEIVER_NOT_EXPORTED)
-        registerReceiver(receiver, IntentFilter(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION))
+
         val permissions = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.NEARBY_WIFI_DEVICES
@@ -101,9 +109,6 @@ class MainActivity : AppCompatActivity() {
     /* register the broadcast receiver with the intent values to be matched */
     override fun onResume() {
         super.onResume()
-        receiver.also { receiver -> this.registerReceiver(receiver, intentFilter,
-            RECEIVER_NOT_EXPORTED
-        ) }
         permissionReceiver.also { permissionReceiver -> this.registerReceiver(permissionReceiver, intentFilter,
             RECEIVER_NOT_EXPORTED
         ) }
@@ -112,9 +117,6 @@ class MainActivity : AppCompatActivity() {
     /* unregister the broadcast receiver */
     override fun onPause() {
         super.onPause()
-        receiver.also { receiver ->
-            unregisterReceiver(receiver)
-        }
         unregisterReceiver(permissionReceiver)
         if (isBound) {
             unbindService(serviceConnection)

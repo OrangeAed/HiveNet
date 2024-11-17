@@ -41,12 +41,12 @@ class ConnectionService : Service() {
     private lateinit var receiver: MyReceiver
     private val peers = mutableListOf<WifiP2pDevice>()
     private var connectionInfo: WifiP2pInfo? = null
-    override fun onBind(intent: Intent?): IBinder {
-        return binder
-    }
-    // LocalBinder class
     inner class LocalBinder : Binder() {
         fun getService(): ConnectionService = this@ConnectionService
+    }
+
+    override fun onBind(intent: Intent?): IBinder {
+        return LocalBinder()
     }
 
     override fun onCreate() {
