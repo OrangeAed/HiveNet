@@ -93,7 +93,9 @@ class MainActivity : AppCompatActivity() {
         binding.inviteButton.setOnClickListener {
             discoverPeers()
         }
-
+        binding.sendData.setOnClickListener {
+            service.sendObject("Hello!")
+        }
     }
     fun sendObject(gameMessage: Any) {
         service.sendObject(gameMessage)

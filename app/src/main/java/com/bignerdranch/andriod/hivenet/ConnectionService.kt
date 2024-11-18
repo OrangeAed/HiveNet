@@ -111,7 +111,7 @@ class ConnectionService : Service() {
         }
     }
 
-    fun startClientSocket(address: InetAddress) {
+    private fun startClientSocket(address: InetAddress) {
         thread {
             try {
                 socket = Socket(address, SERVER_PORT)
@@ -135,7 +135,7 @@ class ConnectionService : Service() {
                 while (true) {
                     val receivedJson = inputReader?.readLine()
                     receivedJson?.let {
-                        Log.d(TAG, "Received message: $it")
+                        Toast.makeText(this, it, Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: IOException) {
