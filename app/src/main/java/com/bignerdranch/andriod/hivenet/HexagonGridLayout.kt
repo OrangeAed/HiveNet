@@ -10,6 +10,9 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
+import com.bignerdranch.andriod.hivenet.dataclasses.Board
+import com.bignerdranch.andriod.hivenet.dataclasses.HexSpace
+import com.bignerdranch.andriod.hivenet.dataclasses.Player
 import kotlin.math.min
 import kotlin.math.sqrt
 
@@ -67,14 +70,20 @@ class HexagonGridLayout @JvmOverloads constructor(
                 }
 
                 // Create ImageView for hexagon and add it to the layout
-                val hexagonImage = ImageView(context).apply {
-                    setImageResource(R.drawable.hexagon) // Use hexagon.png from drawables
-                    layoutParams = LayoutParams(hexagonWidth.toInt(), hexagonHeight.toInt())
-                    this.x = x.toFloat()
-                    this.y = y
-                }
-                hexagonImages.add(hexagonImage)
-                addView(hexagonImage)
+                val hexagonImage = HexSpace(
+                    row,
+                    col,
+                    null,
+                    null,
+                    imageView = ImageView(context).apply {
+                        setImageResource(R.drawable.hexagon) // Use hexagon.png from drawables
+                        layoutParams = LayoutParams(hexagonWidth.toInt(), hexagonHeight.toInt())
+                        this.x = x.toFloat()
+                        this.y = y
+                    }
+                )
+                hexagonImages.add(hexagonImage.imageView)
+                addView(hexagonImage.imageView)
             }
         }
     }
