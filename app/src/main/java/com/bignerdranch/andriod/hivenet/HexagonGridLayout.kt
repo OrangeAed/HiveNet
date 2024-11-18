@@ -3,13 +3,13 @@ package com.bignerdranch.andriod.hivenet
 import android.content.Context
 import android.content.Context.WINDOW_SERVICE
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
-import android.graphics.Bitmap
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
+import com.bignerdranch.andriod.hivenet.dataclasses.HexSpace
 import kotlin.math.min
 import kotlin.math.sqrt
 
@@ -17,7 +17,7 @@ class HexagonGridLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
 
-    private val hexagonImages = mutableListOf<ImageView>()
+    private val hexagonImages = mutableListOf<HexSpace>()
     private var hexagonSpacing: Float
 
     private val margin = 50
@@ -29,9 +29,6 @@ class HexagonGridLayout @JvmOverloads constructor(
 
     private var hexagonWidth: Float
     init {
-
-        // on below line we are getting metrics
-        // for display using window manager.
         val windowManager = context.getSystemService(WINDOW_SERVICE) as WindowManager
         val height = windowManager.currentWindowMetrics.bounds.height()
         val width = windowManager.currentWindowMetrics.bounds.width()
@@ -131,3 +128,5 @@ class HexagonGridLayout @JvmOverloads constructor(
         return closestHexagon
     }
 }
+
+
