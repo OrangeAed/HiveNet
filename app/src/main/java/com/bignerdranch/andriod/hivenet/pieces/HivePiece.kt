@@ -39,13 +39,10 @@ abstract class HivePiece(
         }
         val touchingPieces = destination.getTouchingPieces()
         // if there is a piece of the opposite color touching the destination, return false
-        if (touchingPieces.any { it? != null && it.getColor() != this.color }) {
+        if (touchingPieces.any { it.getColor() != this.color }) {
             return false
         }
         // if there is a piece of the same color touching the destination, return true
-        return touchingPieces.any { it?.hivePiece != null }
-
-        // we do not need to check if the one hive rule is violated because of simple induction.
-        // If a board is valid before we  place a piece, it will be valid after we place the piece.
+        return touchingPieces.isNotEmpty()
     }
 }

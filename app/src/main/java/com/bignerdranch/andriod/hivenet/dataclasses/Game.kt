@@ -1,7 +1,5 @@
-package com.bignerdranch.andriod.hivenet
+package com.bignerdranch.andriod.hivenet.dataclasses
 
-import com.bignerdranch.andriod.hivenet.dataclasses.Board
-import com.bignerdranch.andriod.hivenet.dataclasses.Player
 import com.bignerdranch.andriod.hivenet.pieces.*
 
 class Game {
