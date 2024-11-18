@@ -14,7 +14,7 @@ data class HexSpace(
     var bottomLeft: HexSpace? = null,
     var bottomRight: HexSpace? = null,
     var isSelected: Boolean = false,
-    var imageView: android.widget.ImageView? = null
+    var imageView: android.widget.ImageView
 ) {
     fun getTouchingPieces(): List<HivePiece> {
         return listOfNotNull(
