@@ -88,6 +88,7 @@ class ConnectionService : Service() {
 
     private fun handleConnectionInfo(info: WifiP2pInfo) {
         // Handle the connection info, either start the server or client
+        Toast.makeText(this, "Handling Connection info", Toast.LENGTH_SHORT).show()
         connectionInfo = info
         if (info.groupFormed) {
             if (info.isGroupOwner) {
@@ -99,6 +100,7 @@ class ConnectionService : Service() {
     }
 
     private fun startServerSocket() {
+        Toast.makeText(this, "Starting Server Socket", Toast.LENGTH_SHORT).show()
         thread {
             try {
                 serverSocket = ServerSocket(SERVER_PORT)
@@ -112,7 +114,8 @@ class ConnectionService : Service() {
         }
     }
 
-    fun startClientSocket(address: InetAddress) {
+    private fun startClientSocket(address: InetAddress) {
+        Toast.makeText(this, "Starting Client Socket", Toast.LENGTH_SHORT).show()
         thread {
             try {
                 socket = Socket(address, SERVER_PORT)
@@ -124,6 +127,7 @@ class ConnectionService : Service() {
     }
 
     private fun initializeSocketStreams(clientSocket: Socket) {
+        Toast.makeText(this, "Initializing Sockets", Toast.LENGTH_SHORT).show()
         socket = clientSocket
         inputReader = clientSocket.getInputStream().bufferedReader()
         outputWriter = clientSocket.getOutputStream().bufferedWriter()
@@ -131,6 +135,7 @@ class ConnectionService : Service() {
     }
 
     private fun listenForMessages() {
+        Toast.makeText(this, "Listening for messages", Toast.LENGTH_SHORT).show()
         thread {
             try {
                 while (true) {
@@ -161,7 +166,7 @@ class ConnectionService : Service() {
         }
     }
 
-    fun resetConnection() {
+    private fun resetConnection() {
         Log.d(TAG, "Resetting connection")
         try {
             socket?.close()
