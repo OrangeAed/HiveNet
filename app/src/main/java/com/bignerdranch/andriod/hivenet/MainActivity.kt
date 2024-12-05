@@ -42,18 +42,17 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var service: ConnectionService
+    private var service: ConnectionService? = null
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            if (binder is ConnectionService.LocalBinder) {
-                service = binder.getService()
-                isBound = true
-                receiver = MyReceiver(service)
-                registerReceiver(
-                    receiver,
-                    IntentFilter(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
-                )
-            }
+            val binder2 = binder as ConnectionService.LocalBinder
+            service = binder2.getService()
+            isBound = true
+            receiver = MyReceiver(service!!)
+            registerReceiver(
+                receiver,
+                IntentFilter(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
+            )
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -96,12 +95,13 @@ class MainActivity : AppCompatActivity() {
 
     }
     fun sendObject(gameMessage: Any) {
-        service.sendObject(gameMessage)
+        service!!.sendObject(gameMessage)
     }
 
 
     override fun onStart() {
         super.onStart()
+        Log.d(TAG, "ON START CALLED")
         val intent = Intent(this, ConnectionService::class.java)
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun discoverPeers() {
         // Start the peer discovery process by requesting peers from WifiP2pManager
-        service.requestPeers()
+        service!!.requestPeers()
 
         // Show a toast to indicate that discovery has started
         Toast.makeText(this, "Discovering peers...", Toast.LENGTH_SHORT).show()
@@ -187,7 +187,6 @@ class MainActivity : AppCompatActivity() {
         const val PERMISSION_REQUEST_CODE = 1001
         const val SERVER_PORT = 8888
     }
-
 
 
 }

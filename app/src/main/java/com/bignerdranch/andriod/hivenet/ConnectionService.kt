@@ -35,18 +35,19 @@ class ConnectionService : Service() {
     private var serverSocket: ServerSocket? = null
     private var inputReader: BufferedReader? = null
     private var outputWriter: BufferedWriter? = null
-    private val binder = LocalBinder()
     private lateinit var manager: WifiP2pManager
     private lateinit var channel: WifiP2pManager.Channel
     private lateinit var receiver: MyReceiver
     private val peers = mutableListOf<WifiP2pDevice>()
     private var connectionInfo: WifiP2pInfo? = null
+
+    private val binder = LocalBinder()
     inner class LocalBinder : Binder() {
         fun getService(): ConnectionService = this@ConnectionService
     }
 
-    override fun onBind(intent: Intent?): IBinder {
-        return LocalBinder()
+    override fun onBind(intent: Intent): IBinder {
+        return binder
     }
 
     override fun onCreate() {

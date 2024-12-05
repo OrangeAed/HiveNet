@@ -35,7 +35,6 @@
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.NEARBY_WIFI_DEVICES"
-            android:process=":remote"
             android:stopWithTask="false"/>
         <activity
             android:name=".GameActivity"
