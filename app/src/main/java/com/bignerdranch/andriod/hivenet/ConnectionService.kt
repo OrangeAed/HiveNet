@@ -224,6 +224,8 @@ class ConnectionService : Service() {
     }
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.NEARBY_WIFI_DEVICES])
     fun requestPeers() {
+
+
         val peerListListener = WifiP2pManager.PeerListListener { peerList ->
             val refreshedPeers = peerList.deviceList
             if (refreshedPeers != peers) {
@@ -236,9 +238,25 @@ class ConnectionService : Service() {
             if (peers.isEmpty()) {
                 Log.d(TAG, "No devices found")
                 return@PeerListListener
+            } else {
+                Log.d(TAG, "Peers " + peers.toString())
             }
         }
         manager.requestPeers(channel, peerListListener)
+    }
+
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.NEARBY_WIFI_DEVICES])
+    fun discoverPeers() {
+        manager.discoverPeers(channel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onFailure(reason: Int) {
+                TODO("Not yet implemented")
+            }
+
+        })
     }
 
     companion object {

@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun discoverPeers() {
         // Start the peer discovery process by requesting peers from WifiP2pManager
-        service!!.requestPeers()
+        service!!.discoverPeers()
 
         // Show a toast to indicate that discovery has started
         Toast.makeText(this, "Discovering peers...", Toast.LENGTH_SHORT).show()
