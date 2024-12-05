@@ -60,7 +60,8 @@ class MyReceiver(
                 val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
                 val info: WifiP2pInfo? = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO, WifiP2pInfo::class.java)
                 if (info != null) {
-                    if (networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true &&
+                    service.onConnectionInfoAvailable(info)
+                    /*if (networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true &&
                         networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
                     ) {
                         // Device is connected to the internet, notify the service
@@ -69,7 +70,7 @@ class MyReceiver(
                         // No internet connection, reset the connection in the service
                         Log.d(TAG, "Not connected to a network")
                         service.resetConnection()
-                    }
+                    }*/
                 }
             }
         }
