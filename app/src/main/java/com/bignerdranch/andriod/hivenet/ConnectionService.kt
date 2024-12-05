@@ -185,8 +185,8 @@ class ConnectionService : Service() {
 
     }
     fun hasRequiredPermissions(): Boolean {
-        val locationPermission = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        val nearbyDevicesPermission = checkSelfPermission(android.Manifest.permission.NEARBY_WIFI_DEVICES) == PackageManager.PERMISSION_GRANTED
+        val locationPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val nearbyDevicesPermission = checkSelfPermission(Manifest.permission.NEARBY_WIFI_DEVICES) == PackageManager.PERMISSION_GRANTED
         return locationPermission && nearbyDevicesPermission
     }
 
@@ -196,7 +196,7 @@ class ConnectionService : Service() {
             sendBroadcast(intent)
         }
     }
-    @RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.NEARBY_WIFI_DEVICES])
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.NEARBY_WIFI_DEVICES])
     private fun connectToDevice(device: WifiP2pDevice) {
         if (!hasRequiredPermissions()) {
             checkAndBroadcastPermissions()
@@ -221,13 +221,14 @@ class ConnectionService : Service() {
             handleConnectionInfo(it)
         }
     }
-    @RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.NEARBY_WIFI_DEVICES])
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.NEARBY_WIFI_DEVICES])
     fun requestPeers() {
         manager.requestPeers(channel) { peersList ->
             peers.clear()
             peers.addAll(peersList.deviceList)
             Log.d(TAG, "Found ${peers.size} peers")
             if (peers.isNotEmpty()) {
+                Toast.makeText(this, "Found peer", Toast.LENGTH_SHORT).show()
                 connectToDevice(peers.first())
             }
         }
