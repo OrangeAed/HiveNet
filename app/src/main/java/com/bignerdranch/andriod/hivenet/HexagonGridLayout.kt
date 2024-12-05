@@ -17,17 +17,27 @@ class HexagonGridLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
 
-    private val hexagonImages = mutableListOf<ImageView>()
+
     private var hexagonSpacing: Float
 
     private val margin = 50
     private val r = 7
     private val c = 7
+    private val hexagonImages: Array<Array<Hex?>> = arrayOf(
+        arrayOfNulls(7),
+        arrayOfNulls(7),
+        arrayOfNulls(7),
+        arrayOfNulls(7),
+        arrayOfNulls(7),
+        arrayOfNulls(7),
+        arrayOfNulls(7),
+        arrayOfNulls(7),
+        arrayOfNulls(7)
+    )
+    var hexagonHeight: Float
 
-    private var hexagonHeight: Float
 
-
-    private var hexagonWidth: Float
+    var hexagonWidth: Float
     init {
 
         // on below line we are getting metrics
@@ -55,7 +65,7 @@ class HexagonGridLayout @JvmOverloads constructor(
         val columns = c
         val xOffset = (0.759 * hexagonHeight) + hexagonSpacing // Horizontal offset for hexagons
         val yOffset = hexagonHeight + hexagonSpacing // Vertical offset for hexagons
-        for (row in 0 until rows) {
+        for (row in 0 until rows ) {
             for (col in 0 until columns) {
 
                 val x = col * xOffset + margin
@@ -69,11 +79,13 @@ class HexagonGridLayout @JvmOverloads constructor(
                 // Create ImageView for hexagon and add it to the layout
                 val hexagonImage = ImageView(context).apply {
                     setImageResource(R.drawable.hexagon) // Use hexagon.png from drawables
-                    layoutParams = LayoutParams(hexagonWidth.toInt(), hexagonHeight.toInt())
+                    layoutParams = LayoutParams(hexagonWidth.toInt() , hexagonHeight.toInt())
                     this.x = x.toFloat()
                     this.y = y
+                    tag="hex"
                 }
-                hexagonImages.add(hexagonImage)
+                val hex = Hex(hexagonImage, row, col, null)
+                hexagonImages[row][col] = hex
                 addView(hexagonImage)
             }
         }
@@ -85,7 +97,7 @@ class HexagonGridLayout @JvmOverloads constructor(
         val yOffset = hexagonHeight // Vertical offset for hexagons
 
         for (row in 0 until rows) {
-            for (col in 0 until columns) {
+            for (col in 0 until columns ) {
                 var x = col * xOffset + margin
                 val y = row * yOffset + margin
 
@@ -100,8 +112,10 @@ class HexagonGridLayout @JvmOverloads constructor(
                     layoutParams = LayoutParams(hexagonWidth.toInt(), hexagonHeight.toInt())
                     this.x = x.toFloat()
                     this.y = y
+                    tag="hex"
                 }
-                hexagonImages.add(hexagonImage)
+                val hex = Hex(hexagonImage, row, col, null)
+                hexagonImages[row][col] = hex
                 addView(hexagonImage)
             }
         }
@@ -116,18 +130,24 @@ class HexagonGridLayout @JvmOverloads constructor(
         addView(imageView) // Add the image to the layout
     }*/
 
+    fun getHex(row: Int, column: Int): Hex? {
+        return hexagonImages[row][column]
+    }
     // Find the closest cell for an image being dragged
     fun findClosestCell(view: View): ImageView? {
         Log.d(TAG, "bug is at x: ${view.x}, y: ${view.y}")
-        val closestHexagon = hexagonImages.minByOrNull { hexagonImage ->
-            val dx = view.x - hexagonImage.x
-            val dy = view.y - hexagonImage.y
+        val closestHexagon = hexagonImages.flatten().filterNotNull().minByOrNull { hexagonImage ->
+            val dx = view.x - hexagonImage.image.x
+            val dy = view.y - hexagonImage.image.y
             val distance = sqrt(dx * dx + dy * dy) // Calculate distance to each hexagon center
             distance
         }
         if (closestHexagon != null) {
-            Log.d(TAG, "x: ${closestHexagon.x}, y: ${closestHexagon.y}")
+            Log.d(TAG, "x: ${closestHexagon.image.x}, y: ${closestHexagon.image.y}")
         }
-        return closestHexagon
+        return closestHexagon?.image
+    }
+
+     inner class Hex(var image: ImageView, var row: Int, var column: Int, var piece: ImageView?) {
     }
 }
