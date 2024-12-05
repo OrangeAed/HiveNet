@@ -15,8 +15,19 @@ class QueenBee(color: Boolean) : HivePiece(color, HivePieceType.QueenBee) {
         return true
     }
 
-    override fun canPlace(destination: HexSpace): Boolean {
-        // Implement logic to check if Queen Bee can be placed at the destination
+    fun isSurrounded(): Boolean {
+        // Implement logic to check if Queen Bee is surrounded
+        if (!isPlayed) {
+            return false
+        }
+        // If an adjacent space is not null and there is not a piece there, return false
+        if (currentHexSpace?.top != null && currentHexSpace?.top?.hivePiece != null) return false
+        if (currentHexSpace?.bottom != null && currentHexSpace?.bottom?.hivePiece != null) return false
+        if (currentHexSpace?.topLeft != null && currentHexSpace?.topLeft?.hivePiece != null) return false
+        if (currentHexSpace?.topRight != null && currentHexSpace?.topRight?.hivePiece != null) return false
+        if (currentHexSpace?.bottomLeft != null && currentHexSpace?.bottomLeft?.hivePiece != null) return false
+        if (currentHexSpace?.bottomRight != null && currentHexSpace?.bottomRight?.hivePiece != null) return false
+
         return true
     }
 }
