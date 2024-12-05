@@ -10,6 +10,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
+import com.bignerdranch.andriod.hivenet.dataclasses.HexSpace
 import kotlin.math.min
 import kotlin.math.sqrt
 
@@ -55,6 +56,7 @@ class HexagonGridLayout @JvmOverloads constructor(
 
         } else {
             initializeHexagons()
+            Log.d(TAG, "0,0: " + hexagonImages[0][0]?.hexSpace?.hsToString())
         }
     }
     companion object {
@@ -84,9 +86,54 @@ class HexagonGridLayout @JvmOverloads constructor(
                     this.y = y
                     tag="hex"
                 }
-                val hex = Hex(hexagonImage, row, col, null)
+                val hex = Hex(hexagonImage, row, col, HexSpace(row, col))
                 hexagonImages[row][col] = hex
                 addView(hexagonImage)
+
+
+            }
+        }
+        for (row in 0 until rows) {
+            for (col in 0 until columns) {
+                val hex = hexagonImages[row][col]
+                if (row > 0) {
+                    hex?.hexSpace?.top = hexagonImages[row - 1][col]?.hexSpace
+                }
+                if (row < rows - 1) {
+                    hex?.hexSpace?.bottom = hexagonImages[row + 1][col]?.hexSpace
+                }
+                if (col % 2 == 0) {
+//                    // higher ones
+//                    if ((col > 0) && (row > 0)) {
+//                        hex?.hexSpace?.topLeft = hexagonImages[row - 1][col - 1]?.hexSpace
+//                    }
+                    if (col > 0) {
+                        if (row > 0) {
+                            hex?.hexSpace?.topLeft = hexagonImages[row - 1][col - 1]?.hexSpace
+                        }
+                        if (row < rows - 1) {
+                            hex?.hexSpace?.bottomLeft = hexagonImages[row][col - 1]?.hexSpace
+                        }
+                    }
+                    if (col < columns - 1) {
+                        if (row > 0) {
+                            hex?.hexSpace?.topRight = hexagonImages[row - 1][col + 1]?.hexSpace
+                        }
+                        if (row < rows - 1) {
+                            hex?.hexSpace?.bottomRight = hexagonImages[row][col + 1]?.hexSpace
+                        }
+                    }
+                }
+                else {
+                    // lower ones
+                    hex?.hexSpace?.topRight = hexagonImages[row][col + 1]?.hexSpace
+                    hex?.hexSpace?.topLeft = hexagonImages[row][col - 1]?.hexSpace
+                    if (row < rows - 1) {
+                        hex?.hexSpace?.bottomRight = hexagonImages[row + 1][col + 1]?.hexSpace
+                        hex?.hexSpace?.bottomLeft = hexagonImages[row + 1][col - 1]?.hexSpace
+                    }
+
+                }
             }
         }
     }
@@ -114,7 +161,7 @@ class HexagonGridLayout @JvmOverloads constructor(
                     this.y = y
                     tag="hex"
                 }
-                val hex = Hex(hexagonImage, row, col, null)
+                val hex = Hex(hexagonImage, row, col, HexSpace(row, col))
                 hexagonImages[row][col] = hex
                 addView(hexagonImage)
             }
@@ -148,6 +195,6 @@ class HexagonGridLayout @JvmOverloads constructor(
         return closestHexagon?.image
     }
 
-     inner class Hex(var image: ImageView, var row: Int, var column: Int, var piece: ImageView?) {
+     inner class Hex(var image: ImageView, var row: Int, var column: Int, var hexSpace: HexSpace) {
     }
 }

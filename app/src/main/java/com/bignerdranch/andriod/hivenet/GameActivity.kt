@@ -56,17 +56,17 @@ class GameActivity : AppCompatActivity() {
     }
 
     fun movePiece(startRow: Int, startCol: Int, endRow: Int, endCol: Int) {
-        val piece = hexagonGridLayout.getHex(startRow, startCol)?.piece
+        val piece = hexagonGridLayout.getHex(startRow, startCol)?.hexSpace?.hivePiece
         val newLocation = hexagonGridLayout.getHex(endRow, endCol)?.image
         if (piece != null && newLocation != null) {
-            val layoutParams = piece.layoutParams as RelativeLayout.LayoutParams
+//            val layoutParams = piece.layoutParams as RelativeLayout.LayoutParams
 
             // Update the position using the closest cell's coordinates
-            layoutParams.leftMargin = newLocation.x.toInt()
-            layoutParams.topMargin = newLocation.y.toInt()
-
-            // Apply the updated layout params to the view
-            piece.layoutParams = layoutParams
+//            layoutParams.leftMargin = newLocation.x.toInt()
+//            layoutParams.topMargin = newLocation.y.toInt()
+//
+//            // Apply the updated layout params to the view
+//            piece.layoutParams = layoutParams
             binding.root.invalidate()
         }
     }

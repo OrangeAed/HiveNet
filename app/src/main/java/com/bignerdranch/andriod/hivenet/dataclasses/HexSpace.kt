@@ -5,7 +5,7 @@ import com.bignerdranch.andriod.hivenet.pieces.HivePiece
 data class HexSpace(
     val row: Int,
     val col: Int,
-    val board: Board? = null,
+//    val board: Board? = null,
     var hivePiece: HivePiece? = null,
     var top: HexSpace? = null,
     var bottom: HexSpace? = null,
@@ -36,5 +36,9 @@ data class HexSpace(
             bottomLeft,
             bottomRight
         )
+    }
+
+    fun hsToString(): String {
+        return "HexSpace(row=$row, col=$col)"
     }
 }

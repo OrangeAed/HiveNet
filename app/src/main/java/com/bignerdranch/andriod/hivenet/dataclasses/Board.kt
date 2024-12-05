@@ -22,14 +22,14 @@ data class Board(
         val centerCol = 4
 
         // Initialize center hex space
-        centerHexSpace = HexSpace(centerRow, centerCol, this)
+        centerHexSpace = HexSpace(centerRow, centerCol)
         board[centerRow][centerCol] = centerHexSpace
 
         // Create hex spaces in the ragged array
         for (row in board.indices) {
             for (col in board[row].indices) {
                 if (row == centerRow && col == centerCol) continue // Skip the center hex space
-                board[row][col] = HexSpace(row, col, this)
+                board[row][col] = HexSpace(row, col)
             }
         }
 
