@@ -231,7 +231,13 @@ class ConnectionService : Service() {
             if (refreshedPeers != peers) {
                 peers.clear()
                 peers.addAll(refreshedPeers)
-                val device = peers[0] // Connect to the first device found
+                var device: WifiP2pDevice = peers[0]
+                for(peer in peers) {
+                    if (peer.deviceName in "Galaxy-S24") {
+                        Log.d(TAG,"Found Aedan")
+                        device = peer
+                    }
+                }
                 connectToDevice(device)
             }
 
@@ -249,13 +255,11 @@ class ConnectionService : Service() {
     fun discoverPeers() {
         manager.discoverPeers(channel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
-                TODO("Not yet implemented")
+                Log.d(TAG, "Found peers")
             }
-
             override fun onFailure(reason: Int) {
-                TODO("Not yet implemented")
+                Log.d(TAG, "Found peers")
             }
-
         })
     }
 

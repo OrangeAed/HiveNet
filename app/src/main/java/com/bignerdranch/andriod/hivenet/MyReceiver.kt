@@ -50,9 +50,7 @@ class MyReceiver(
             }
             WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
                 // Request available peers
-                if (service.hasRequiredPermissions()) {
-                    service.requestPeers()
-                }
+                service.requestPeers()
             }
             WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
                 val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
