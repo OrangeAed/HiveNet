@@ -224,15 +224,21 @@ class ConnectionService : Service() {
     }
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.NEARBY_WIFI_DEVICES])
     fun requestPeers() {
-        manager.requestPeers(channel) { peersList ->
-            peers.clear()
-            peers.addAll(peersList.deviceList)
-            Log.d(TAG, "Found ${peers.size} peers")
-            if (peers.isNotEmpty()) {
-                Toast.makeText(this, "Found peer", Toast.LENGTH_SHORT).show()
-                connectToDevice(peers.first())
+        val peerListListener = WifiP2pManager.PeerListListener { peerList ->
+            val refreshedPeers = peerList.deviceList
+            if (refreshedPeers != peers) {
+                peers.clear()
+                peers.addAll(refreshedPeers)
+                val device = peers[0] // Connect to the first device found
+                connectToDevice(device)
+            }
+
+            if (peers.isEmpty()) {
+                Log.d(TAG, "No devices found")
+                return@PeerListListener
             }
         }
+        manager.requestPeers(channel, peerListListener)
     }
 
     companion object {
