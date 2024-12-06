@@ -193,11 +193,6 @@ class GameActivity : AppCompatActivity() {
 
         val copy = ImageView(this).apply {
             setImageDrawable((original as ImageView).drawable.constantState?.newDrawable()?.mutate())
-            layoutParams = RelativeLayout.LayoutParams((hexagonGridLayout.hexagonWidth * .8).toInt(), (hexagonGridLayout.hexagonHeight * .8).toInt()).apply {
-                topMargin = y.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
-                leftMargin = x.toInt() + (hexagonGridLayout.hexagonHeight * .1).toInt()
-            }
-            tag = "copy"
         }
         if (nextTurn) {
             tintRed(copy)
@@ -215,6 +210,13 @@ class GameActivity : AppCompatActivity() {
             tintRed(spiderimage)
             tintRed(grasshopperimage)
             nextTurn = true
+        }
+        copy.apply {
+            layoutParams = RelativeLayout.LayoutParams((hexagonGridLayout.hexagonWidth * .8).toInt(), (hexagonGridLayout.hexagonHeight * .8).toInt()).apply {
+                topMargin = y.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
+                leftMargin = x.toInt() + (hexagonGridLayout.hexagonHeight * .1).toInt()
+            }
+            tag = "copy"
         }
         hexagonGridLayout.placePiece(closestCell, copy)
         binding.root.addView(copy)
@@ -338,8 +340,6 @@ class GameActivity : AppCompatActivity() {
 
             if (closestCell != null) {
                 if (releasedChild.tag == "copy") {
-
-
                     hexagonGridLayout.removePiece(releasedChild)
                     val layoutParams = releasedChild.layoutParams as RelativeLayout.LayoutParams
 
@@ -347,12 +347,26 @@ class GameActivity : AppCompatActivity() {
                     layoutParams.topMargin = closestCell.image.y.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
 
                     releasedChild.layoutParams = layoutParams
+                    if (nextTurn) {
+                        tintBlack(antimage)
+                        tintBlack(beeimage)
+                        tintBlack(beetleimage)
+                        tintBlack(spiderimage)
+                        tintBlack(grasshopperimage)
+                        nextTurn = false
+                    } else {
+                        tintRed(antimage)
+                        tintRed(beeimage)
+                        tintRed(beetleimage)
+                        tintRed(spiderimage)
+                        tintRed(grasshopperimage)
+                        nextTurn = true
+                    }
                     binding.root.invalidate()
 
                     hexagonGridLayout.placePiece(closestCell, releasedChild)
                 }
                 else {
-
                     createCopyOfImage(releasedChild, closestCell)
                 }
             } else {
