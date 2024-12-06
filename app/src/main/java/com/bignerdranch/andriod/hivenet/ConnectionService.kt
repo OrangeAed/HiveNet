@@ -245,7 +245,7 @@ class ConnectionService : Service() {
                 Log.d(TAG, "No devices found")
                 return@PeerListListener
             } else {
-                Log.d(TAG, "Peers " + peers.toString())
+                Log.d(TAG, "Peers $peers")
             }
         }
         manager.requestPeers(channel, peerListListener)

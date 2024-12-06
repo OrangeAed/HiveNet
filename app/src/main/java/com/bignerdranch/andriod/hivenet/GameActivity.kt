@@ -23,7 +23,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.marginLeft
 import androidx.core.view.updateLayoutParams
 import androidx.customview.widget.ViewDragHelper
+import androidx.lifecycle.lifecycleScope
+import coil3.load
 import com.bignerdranch.andriod.hivenet.databinding.ActivityGameBinding
+import kotlinx.coroutines.launch
 import kotlin.math.min
 
 class GameActivity : AppCompatActivity() {
@@ -93,11 +96,13 @@ class GameActivity : AppCompatActivity() {
 
 
     }
+
     override fun onStart() {
         super.onStart()
         // Bind to the same ConnectionService instance
         val intent = Intent(this, ConnectionService::class.java)
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+
     }
 
     override fun onStop() {
@@ -143,16 +148,46 @@ class GameActivity : AppCompatActivity() {
         }
         val spaceBetweenImages = screenWidth / 5 // To space the images evenly
 
-        drawableIds.forEachIndexed { index, drawableId ->
-            val image = ImageView(this).apply {
-                setImageResource(drawableId)
-                layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
-                    leftMargin = ((index * spaceBetweenImages + 50f)).toInt()
-                    topMargin = screenHeight - pieceHeight - 50 // Fixed bottom margin to align the images at the bottom
-                }
+        val antimage = ImageView(this).apply {
+            layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
+                leftMargin = ((0 * spaceBetweenImages + 50f)).toInt()
+                topMargin = screenHeight - pieceHeight - 50 // Fixed bottom margin to align the images at the bottom
             }
-            binding.root.addView(image)
         }
+        antimage.load("https://live.staticflickr.com/65535/54185775751_d4f032bff7_o.png")
+        binding.root.addView(antimage)
+        val beeimage = ImageView(this).apply {
+            layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
+                leftMargin = ((1 * spaceBetweenImages + 50f)).toInt()
+                topMargin = screenHeight - pieceHeight - 50 // Fixed bottom margin to align the images at the bottom
+            }
+        }
+        beeimage.load("https://live.staticflickr.com/65535/54186070154_624f975422_o.png")
+        binding.root.addView(beeimage)
+        val beetleimage = ImageView(this).apply {
+            layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
+                leftMargin = ((2 * spaceBetweenImages + 50f)).toInt()
+                topMargin = screenHeight - pieceHeight - 50 // Fixed bottom margin to align the images at the bottom
+            }
+        }
+        beetleimage.load("https://live.staticflickr.com/65535/54186070149_53971b6722_o.png")
+        binding.root.addView(beetleimage)
+        val spiderimage = ImageView(this).apply {
+            layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
+                leftMargin = ((3 * spaceBetweenImages + 50f)).toInt()
+                topMargin = screenHeight - pieceHeight - 50 // Fixed bottom margin to align the images at the bottom
+            }
+        }
+        spiderimage.load("https://live.staticflickr.com/65535/54186070144_b4d5a18628_o.png")
+        binding.root.addView(spiderimage)
+        val grasshopperimage = ImageView(this).apply {
+            layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
+                leftMargin = ((4 * spaceBetweenImages + 50f)).toInt()
+                topMargin = screenHeight - pieceHeight - 50 // Fixed bottom margin to align the images at the bottom
+            }
+        }
+        grasshopperimage.load("https://live.staticflickr.com/65535/54184902322_e4f08c8428_o.png")
+        binding.root.addView(grasshopperimage)
     }
     private fun addPiecesLandscape(screenHeight: Int, pieceHeight: Int, drawableIds: List<Int>) {
         val spaceBetweenImages = screenHeight / 5
@@ -198,6 +233,7 @@ class GameActivity : AppCompatActivity() {
             originalY = capturedChild.y
             capturedChild.bringToFront()
         }
+
 
         override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
             Log.d(TAG, "onViewReleased: Released child at (${releasedChild.x}, ${releasedChild.y})")
