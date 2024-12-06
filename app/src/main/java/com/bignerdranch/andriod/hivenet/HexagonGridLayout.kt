@@ -84,7 +84,7 @@ class HexagonGridLayout @JvmOverloads constructor(
                     this.y = y
                     tag="hex"
                 }
-                val hex = Hex(hexagonImage, row, col, null)
+                val hex = Hex(hexagonImage, null)
                 hexagonImages[row][col] = hex
                 addView(hexagonImage)
             }
@@ -114,7 +114,7 @@ class HexagonGridLayout @JvmOverloads constructor(
                     this.y = y
                     tag="hex"
                 }
-                val hex = Hex(hexagonImage, row, col, null)
+                val hex = Hex(hexagonImage, null)
                 hexagonImages[row][col] = hex
                 addView(hexagonImage)
             }
@@ -139,7 +139,7 @@ class HexagonGridLayout @JvmOverloads constructor(
         val closestHexagon = hexagonImages.flatten().filterNotNull().minByOrNull { hexagonImage ->
             val dx = view.x - hexagonImage.image.x
             val dy = view.y - hexagonImage.image.y
-            val distance = sqrt(dx * dx + dy * dy) // Calculate distance to each hexagon center
+            val distance = sqrt(dx * dx + dy * dy)
             distance
         }
         if (closestHexagon != null) {
@@ -148,6 +148,6 @@ class HexagonGridLayout @JvmOverloads constructor(
         return closestHexagon?.image
     }
 
-     inner class Hex(var image: ImageView, var row: Int, var column: Int, var piece: ImageView?) {
+     inner class Hex(var image: ImageView, var piece: ImageView?) {
     }
 }
