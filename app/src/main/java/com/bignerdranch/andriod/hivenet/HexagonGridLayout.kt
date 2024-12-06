@@ -17,7 +17,7 @@ class HexagonGridLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
 
-    inner class Hex(var image: ImageView, var piece: ImageView?)
+    inner class Hex(var image: ImageView, var piece: String?)
     private var hexagonSpacing: Float
     private val margin = 50
     private val r = 7
@@ -136,11 +136,12 @@ class HexagonGridLayout @JvmOverloads constructor(
             val dx = view.x - closestHexagon.image.x
             val dy = view.y - closestHexagon.image.y
             val distance = sqrt(dx * dx + dy * dy)
-            if (distance > hexagonHeight * 2) {
+            if (distance > hexagonHeight * 2 || closestHexagon.piece != null) {
                 return null
             }
             Log.d(TAG, "x: ${closestHexagon.image.x}, y: ${closestHexagon.image.y}")
         }
+        closestHexagon?.piece = view.tag.toString()
         return closestHexagon?.image
     }
 }

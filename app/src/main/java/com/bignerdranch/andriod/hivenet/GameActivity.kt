@@ -55,7 +55,7 @@ class GameActivity : AppCompatActivity() {
         private const val TAG = "GameActivity"
     }
 
-    fun movePiece(startRow: Int, startCol: Int, endRow: Int, endCol: Int) {
+    /*fun movePiece(startRow: Int, startCol: Int, endRow: Int, endCol: Int) {
         val piece = hexagonGridLayout.getHex(startRow, startCol)?.piece
         val newLocation = hexagonGridLayout.getHex(endRow, endCol)?.image
         if (piece != null && newLocation != null) {
@@ -67,7 +67,7 @@ class GameActivity : AppCompatActivity() {
             piece.layoutParams = layoutParams
             binding.root.invalidate()
         }
-    }
+    }*/
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,6 +139,7 @@ class GameActivity : AppCompatActivity() {
                 leftMargin = 0
                 topMargin = screenHeight - pieceHeight - 50
             }
+            tag="ant"
         }
         antimage.load("https://live.staticflickr.com/65535/54185775751_d4f032bff7_o.png")
         binding.root.addView(antimage)
@@ -147,6 +148,7 @@ class GameActivity : AppCompatActivity() {
                 leftMargin = ((1 * spaceBetweenImages + 50f)).toInt()
                 topMargin = screenHeight - pieceHeight - 50
             }
+            tag="bee"
         }
         beeimage.load("https://live.staticflickr.com/65535/54186070154_624f975422_o.png")
         binding.root.addView(beeimage)
@@ -155,6 +157,7 @@ class GameActivity : AppCompatActivity() {
                 leftMargin = ((2 * spaceBetweenImages + 50f)).toInt()
                 topMargin = screenHeight - pieceHeight - 50
             }
+            tag="beetle"
         }
         beetleimage.load("https://live.staticflickr.com/65535/54186070149_53971b6722_o.png")
         binding.root.addView(beetleimage)
@@ -163,6 +166,7 @@ class GameActivity : AppCompatActivity() {
                 leftMargin = ((3 * spaceBetweenImages + 50f)).toInt()
                 topMargin = screenHeight - pieceHeight - 50
             }
+            tag="spider"
         }
         spiderimage.load("https://live.staticflickr.com/65535/54186070144_b4d5a18628_o.png")
         binding.root.addView(spiderimage)
@@ -171,6 +175,7 @@ class GameActivity : AppCompatActivity() {
                 leftMargin = ((4 * spaceBetweenImages + 50f)).toInt()
                 topMargin = screenHeight - pieceHeight - 50
             }
+            tag="grasshopper"
         }
         grasshopperimage.load("https://live.staticflickr.com/65535/54184902322_e4f08c8428_o.png")
         binding.root.addView(grasshopperimage)
@@ -192,10 +197,6 @@ class GameActivity : AppCompatActivity() {
         }
     }
     private inner class DragHelperCallback : ViewDragHelper.Callback() {
-        private var originalX = 0f
-        private var originalY = 0f
-        private var originalLeft = 0
-        private var originalTop = 0
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             if (child.tag == "hex") {
                 return false
@@ -212,11 +213,7 @@ class GameActivity : AppCompatActivity() {
         }
 
         override fun onViewCaptured(capturedChild: View, pointerId: Int) {
-            originalX = capturedChild.x
-            originalY = capturedChild.y
             capturedChild.bringToFront()
-            originalLeft = capturedChild.left
-            originalTop = capturedChild.top
         }
 
         override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
