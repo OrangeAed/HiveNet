@@ -17,7 +17,7 @@ class HexagonGridLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
 
-    inner class Hex(var image: ImageView, var piece: String?)
+    inner class Hex(var image: ImageView, var piece: ImageView?)
     private var hexagonSpacing: Float
     private val margin = 50
     private val topMargin: Int
@@ -125,7 +125,7 @@ class HexagonGridLayout @JvmOverloads constructor(
     fun getHex(row: Int, column: Int): Hex? {
         return hexagonImages[row][column]
     }
-    fun findClosestCell(view: View): ImageView? {
+    fun findClosestCell(view: ImageView): Hex? {
         Log.d(TAG, "bug is at x: ${view.x}, y: ${view.y}")
         val closestHexagon = hexagonImages.flatten().filterNotNull().minByOrNull { hexagonImage ->
             val dx = view.x - hexagonImage.image.x
@@ -143,7 +143,16 @@ class HexagonGridLayout @JvmOverloads constructor(
             }
             Log.d(TAG, "x: ${closestHexagon.image.x}, y: ${closestHexagon.image.y}")
         }
-        closestHexagon?.piece = view.tag.toString()
-        return closestHexagon?.image
+        return closestHexagon
+    }
+
+    fun removePiece(releasedChild: ImageView) {
+        val hex = hexagonImages.flatten().filterNotNull().find {
+            it.piece == releasedChild
+        }
+        hex?.piece = null
+    }
+    fun placePiece(hex: Hex, piece: ImageView) {
+        hex.piece = piece
     }
 }

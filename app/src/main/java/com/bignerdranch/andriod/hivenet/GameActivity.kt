@@ -182,7 +182,10 @@ class GameActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(event)
     }
 
-    private fun createCopyOfImage(original: View, x: Float, y: Float) {
+    private fun createCopyOfImage(original: View, closestCell: HexagonGridLayout.Hex) {
+        val x = closestCell.image.x
+        val y = closestCell.image.y
+
         val copy = ImageView(this).apply {
             setImageDrawable((original as ImageView).drawable)
             layoutParams = RelativeLayout.LayoutParams((hexagonGridLayout.hexagonWidth * .8).toInt(), (hexagonGridLayout.hexagonHeight * .8).toInt()).apply {
@@ -204,7 +207,7 @@ class GameActivity : AppCompatActivity() {
             copy.setImageDrawable(wrappedDrawable)
             nextTurn = true
         }
-
+        hexagonGridLayout.placePiece(closestCell, copy)
         binding.root.addView(copy)
     }
 
@@ -305,20 +308,26 @@ class GameActivity : AppCompatActivity() {
 
         override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
             Log.d(TAG, "onViewReleased: Released child at (${releasedChild.x}, ${releasedChild.y})")
-            val closestCell = hexagonGridLayout.findClosestCell(releasedChild)
+            val closestCell = hexagonGridLayout.findClosestCell(releasedChild as ImageView)
 
             if (closestCell != null) {
                 if (releasedChild.tag == "copy") {
+
+
+                    hexagonGridLayout.removePiece(releasedChild)
                     val layoutParams = releasedChild.layoutParams as RelativeLayout.LayoutParams
 
-                    layoutParams.leftMargin = closestCell.x.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
-                    layoutParams.topMargin = closestCell.y.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
+                    layoutParams.leftMargin = closestCell.image.x.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
+                    layoutParams.topMargin = closestCell.image.y.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
 
                     releasedChild.layoutParams = layoutParams
                     binding.root.invalidate()
+
+                    hexagonGridLayout.placePiece(closestCell, releasedChild)
                 }
                 else {
-                    createCopyOfImage(releasedChild, closestCell.x, closestCell.y)
+
+                    createCopyOfImage(releasedChild, closestCell)
                 }
             } else {
                 binding.root.requestLayout()
