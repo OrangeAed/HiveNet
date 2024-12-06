@@ -128,10 +128,8 @@ class GameActivity : AppCompatActivity() {
         // find the queens
         for (row in 0 until 7) {
             for (col in 0 until 7){
-                if (hexagonGridLayout.getHex(row, col)?.piece?.tag == "queen") {
+                if (hexagonGridLayout.getHex(row, col)?.bugType == "bee") {
                     if (hexagonGridLayout.isHexSurrounded(row, col)) {
-                        // game over
-//                        onGameOver(hexagonGridLayout.getHex(row, col)?.piece?.color ?: "No one")
                         if (hexagonGridLayout.getHex(row, col)?.black == true) {
                             onGameOver("Black")
                         } else {
