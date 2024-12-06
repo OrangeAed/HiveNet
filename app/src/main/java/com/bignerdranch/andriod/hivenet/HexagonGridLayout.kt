@@ -17,7 +17,7 @@ class HexagonGridLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
 
-    inner class Hex(var image: ImageView, var piece: ImageView?, var black: Boolean?)
+    inner class Hex(var image: ImageView, var piece: ImageView?, var black: Boolean?, var bugType: String?)
 
     private var hexagonSpacing: Float
     private val margin = 50
@@ -79,7 +79,7 @@ class HexagonGridLayout @JvmOverloads constructor(
                     this.y = y
                     tag="hex"
                 }
-                val hex = Hex(hexagonImage, null, null)
+                val hex = Hex(hexagonImage, null, null, null)
                 hexagonImages[row][col] = hex
                 addView(hexagonImage)
             }
@@ -107,7 +107,7 @@ class HexagonGridLayout @JvmOverloads constructor(
                     this.y = y
                     tag="hex"
                 }
-                val hex = Hex(hexagonImage, null, null)
+                val hex = Hex(hexagonImage, null, null, null)
                 hexagonImages[row][col] = hex
                 addView(hexagonImage)
             }
@@ -254,17 +254,19 @@ class HexagonGridLayout @JvmOverloads constructor(
         return closestHexagon
     }
 
-    fun removePiece(releasedChild: ImageView): Boolean? {
+    fun removePiece(releasedChild: ImageView): Hex? {
         val hex = hexagonImages.flatten().filterNotNull().find {
             it.piece == releasedChild
         }
-        val original = hex?.black
+        val original = hex?.let { Hex(it.image, null, hex.black, hex.bugType) }
         hex?.piece = null
         hex?.black = null
+        hex?.bugType = null
         return original
     }
-    fun placePiece(hex: Hex, piece: ImageView, black: Boolean) {
+    fun placePiece(hex: Hex, piece: ImageView, black: Boolean, bugType: String) {
         hex.piece = piece
         hex.black = black
+        hex.bugType = bugType
     }
 }

@@ -1,7 +1,6 @@
 package com.bignerdranch.andriod.hivenet
 
 import MyReceiver
-import android.R
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
@@ -28,8 +27,6 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.customview.widget.ViewDragHelper
@@ -207,7 +204,11 @@ class GameActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(event)
     }
 
-    private fun createCopyOfImage(original: View, closestCell: HexagonGridLayout.Hex) {
+    private fun createCopyOfImage(
+        original: View,
+        closestCell: HexagonGridLayout.Hex,
+        bugType: String
+    ) {
         val x = closestCell.image.x
         val y = closestCell.image.y
 
@@ -238,7 +239,7 @@ class GameActivity : AppCompatActivity() {
             }
             tag = "copy"
         }
-        hexagonGridLayout.placePiece(closestCell, copy, nextTurn)
+        hexagonGridLayout.placePiece(closestCell, copy, nextTurn, bugType)
         binding.root.addView(copy)
     }
     private fun tintRed(view: ImageView) {
@@ -360,7 +361,7 @@ class GameActivity : AppCompatActivity() {
 
             if (closestCell != null) {
                 if (releasedChild.tag == "copy") {
-                    var black = hexagonGridLayout.removePiece(releasedChild)
+                    val originalHex = hexagonGridLayout.removePiece(releasedChild)
                     val layoutParams = releasedChild.layoutParams as RelativeLayout.LayoutParams
 
                     layoutParams.leftMargin = closestCell.image.x.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
@@ -384,10 +385,10 @@ class GameActivity : AppCompatActivity() {
                     }
                     binding.root.invalidate()
 
-                    hexagonGridLayout.placePiece(closestCell, releasedChild, black!!)
+                    hexagonGridLayout.placePiece(closestCell, releasedChild, originalHex!!.black!!, originalHex.bugType!!)
                 }
                 else {
-                    createCopyOfImage(releasedChild, closestCell)
+                    createCopyOfImage(releasedChild, closestCell, releasedChild.tag.toString())
                 }
             } else {
                 binding.root.requestLayout()
