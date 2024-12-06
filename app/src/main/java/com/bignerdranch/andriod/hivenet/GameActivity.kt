@@ -1,24 +1,23 @@
 package com.bignerdranch.andriod.hivenet
 
 import MyReceiver
+import android.R
 import android.content.BroadcastReceiver
 import android.content.ComponentName
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
 import android.view.PixelCopy
@@ -29,10 +28,10 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider.getUriForFile
-import androidx.core.net.toUri
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.customview.widget.ViewDragHelper
 import androidx.lifecycle.lifecycleScope
 import coil3.load
@@ -42,9 +41,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.security.AccessController.getContext
 import kotlin.math.min
 
 
@@ -55,6 +52,7 @@ class GameActivity : AppCompatActivity() {
     private lateinit var service: ConnectionService
     private lateinit var receiver: BroadcastReceiver
     private var isBound = false
+    private var nextTurn = false
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             if (binder is ConnectionService.LocalBinder) {
@@ -193,6 +191,19 @@ class GameActivity : AppCompatActivity() {
             }
             tag = "copy"
         }
+        if (nextTurn) {
+            val unwrappedDrawable = copy.drawable
+            val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
+            DrawableCompat.setTint(wrappedDrawable, Color.RED)
+            copy.setImageDrawable(wrappedDrawable)
+            nextTurn = false
+        } else {
+            val unwrappedDrawable = copy.drawable
+            val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
+            DrawableCompat.setTint(wrappedDrawable, Color.BLACK)
+            copy.setImageDrawable(wrappedDrawable)
+            nextTurn = true
+        }
 
         binding.root.addView(copy)
     }
@@ -202,11 +213,10 @@ class GameActivity : AppCompatActivity() {
         val screenWidth = resources.displayMetrics.widthPixels
         val boardHeight = min(screenHeight, screenWidth)
         val pieceHeight = min(450, (boardHeight - 50 * 2 - 40)/5 ).toInt()
-        val drawableIds = listOf(R.drawable.ant, R.drawable.bee, R.drawable.beetle, R.drawable.grasshopper, R.drawable.spider)
         val landscape = resources.configuration.orientation == ORIENTATION_LANDSCAPE
         val pieceMargin = screenHeight / 12
         if (landscape) {
-            addPiecesLandscape(screenHeight, pieceHeight, drawableIds)
+            addPiecesLandscape(screenHeight, pieceHeight)
             return
         }
         val spaceBetweenImages = (screenWidth - 100) / 5
@@ -257,9 +267,9 @@ class GameActivity : AppCompatActivity() {
         grasshopperimage.load("https://live.staticflickr.com/65535/54184902322_e4f08c8428_o.png")
         binding.root.addView(grasshopperimage)
     }
-    private fun addPiecesLandscape(screenHeight: Int, pieceHeight: Int, drawableIds: List<Int>) {
+    private fun addPiecesLandscape(screenHeight: Int, pieceHeight: Int) {
         val spaceBetweenImages = screenHeight / 5
-        drawableIds.forEachIndexed { index, drawableId ->
+        /*drawableIds.forEachIndexed { index, drawableId ->
             val image = ImageView(this).apply {
                 setImageResource(drawableId)
                 layoutParams = ConstraintLayout.LayoutParams(pieceHeight, pieceHeight).apply {
@@ -271,7 +281,7 @@ class GameActivity : AppCompatActivity() {
                 }
             }
             binding.root.addView(image)
-        }
+        }*/
     }
     private inner class DragHelperCallback : ViewDragHelper.Callback() {
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
