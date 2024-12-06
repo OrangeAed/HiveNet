@@ -17,7 +17,8 @@ class HexagonGridLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
 
-    inner class Hex(var image: ImageView, var piece: ImageView?)
+    inner class Hex(var image: ImageView, var piece: ImageView?, var black: Boolean?)
+
     private var hexagonSpacing: Float
     private val margin = 50
     private val topMargin: Int
@@ -78,7 +79,7 @@ class HexagonGridLayout @JvmOverloads constructor(
                     this.y = y
                     tag="hex"
                 }
-                val hex = Hex(hexagonImage, null)
+                val hex = Hex(hexagonImage, null, null)
                 hexagonImages[row][col] = hex
                 addView(hexagonImage)
             }
@@ -106,7 +107,7 @@ class HexagonGridLayout @JvmOverloads constructor(
                     this.y = y
                     tag="hex"
                 }
-                val hex = Hex(hexagonImage, null)
+                val hex = Hex(hexagonImage, null, null)
                 hexagonImages[row][col] = hex
                 addView(hexagonImage)
             }
@@ -151,8 +152,10 @@ class HexagonGridLayout @JvmOverloads constructor(
             it.piece == releasedChild
         }
         hex?.piece = null
+        hex?.black = null
     }
-    fun placePiece(hex: Hex, piece: ImageView) {
+    fun placePiece(hex: Hex, piece: ImageView, black: Boolean) {
         hex.piece = piece
+        hex.black = black
     }
 }
