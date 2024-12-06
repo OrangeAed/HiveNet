@@ -20,6 +20,7 @@ class HexagonGridLayout @JvmOverloads constructor(
     inner class Hex(var image: ImageView, var piece: String?)
     private var hexagonSpacing: Float
     private val margin = 50
+    private val topMargin: Int
     private val r = 7
     private val c = 7
     private val hexagonImages: Array<Array<Hex?>> = arrayOf(
@@ -40,6 +41,7 @@ class HexagonGridLayout @JvmOverloads constructor(
         val height = windowManager.currentWindowMetrics.bounds.height()
         val width = windowManager.currentWindowMetrics.bounds.width()
         val boardHeight = min(height, width)
+        topMargin = height / 15
         hexagonHeight = min(450, (boardHeight - margin * 2)/5 ).toFloat()
         hexagonWidth = hexagonHeight
         hexagonSpacing = hexagonHeight * -0.0741f
@@ -63,7 +65,7 @@ class HexagonGridLayout @JvmOverloads constructor(
             for (col in 0 until columns) {
 
                 val x = col * xOffset + margin
-                var y = row * yOffset + margin
+                var y = row * yOffset + topMargin
 
                 if (col % 2 == 1) {
                     y += yOffset / 2
