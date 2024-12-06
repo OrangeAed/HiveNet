@@ -46,6 +46,11 @@ import kotlin.math.min
 
 
 class GameActivity : AppCompatActivity() {
+    private lateinit var antimage: ImageView
+    private lateinit var beeimage: ImageView
+    private lateinit var beetleimage: ImageView
+    private lateinit var spiderimage: ImageView
+    private lateinit var grasshopperimage: ImageView
     private lateinit var hexagonGridLayout: HexagonGridLayout
     private lateinit var binding: ActivityGameBinding
     private lateinit var dragHelper: ViewDragHelper
@@ -187,7 +192,7 @@ class GameActivity : AppCompatActivity() {
         val y = closestCell.image.y
 
         val copy = ImageView(this).apply {
-            setImageDrawable((original as ImageView).drawable)
+            setImageDrawable((original as ImageView).drawable.constantState?.newDrawable()?.mutate())
             layoutParams = RelativeLayout.LayoutParams((hexagonGridLayout.hexagonWidth * .8).toInt(), (hexagonGridLayout.hexagonHeight * .8).toInt()).apply {
                 topMargin = y.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
                 leftMargin = x.toInt() + (hexagonGridLayout.hexagonHeight * .1).toInt()
@@ -195,20 +200,36 @@ class GameActivity : AppCompatActivity() {
             tag = "copy"
         }
         if (nextTurn) {
-            val unwrappedDrawable = copy.drawable
-            val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
-            DrawableCompat.setTint(wrappedDrawable, Color.RED)
-            copy.setImageDrawable(wrappedDrawable)
+            tintRed(copy)
+            tintBlack(antimage)
+            tintBlack(beeimage)
+            tintBlack(beetleimage)
+            tintBlack(spiderimage)
+            tintBlack(grasshopperimage)
             nextTurn = false
         } else {
-            val unwrappedDrawable = copy.drawable
-            val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
-            DrawableCompat.setTint(wrappedDrawable, Color.BLACK)
-            copy.setImageDrawable(wrappedDrawable)
+            tintBlack(copy)
+            tintRed(antimage)
+            tintRed(beeimage)
+            tintRed(beetleimage)
+            tintRed(spiderimage)
+            tintRed(grasshopperimage)
             nextTurn = true
         }
         hexagonGridLayout.placePiece(closestCell, copy)
         binding.root.addView(copy)
+    }
+    private fun tintRed(view: ImageView) {
+        val unwrappedDrawable = view.drawable
+        val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
+        DrawableCompat.setTint(wrappedDrawable, Color.RED)
+        view.setImageDrawable(wrappedDrawable)
+    }
+    private fun tintBlack(view: ImageView) {
+        val unwrappedDrawable = view.drawable
+        val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
+        DrawableCompat.setTint(wrappedDrawable, Color.BLACK)
+        view.setImageDrawable(wrappedDrawable)
     }
 
     private fun addPieces() {
@@ -224,7 +245,8 @@ class GameActivity : AppCompatActivity() {
         }
         val spaceBetweenImages = (screenWidth - 100) / 5
 
-        val antimage = ImageView(this).apply {
+
+        antimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
                 leftMargin = 50
                 topMargin = screenHeight - pieceHeight - pieceMargin
@@ -233,7 +255,8 @@ class GameActivity : AppCompatActivity() {
         }
         antimage.load("https://live.staticflickr.com/65535/54185775751_d4f032bff7_o.png")
         binding.root.addView(antimage)
-        val beeimage = ImageView(this).apply {
+
+        beeimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
                 leftMargin = ((1 * spaceBetweenImages + 50f)).toInt()
                 topMargin = screenHeight - pieceHeight - pieceMargin
@@ -242,7 +265,8 @@ class GameActivity : AppCompatActivity() {
         }
         beeimage.load("https://live.staticflickr.com/65535/54186070154_624f975422_o.png")
         binding.root.addView(beeimage)
-        val beetleimage = ImageView(this).apply {
+
+        beetleimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
                 leftMargin = ((2 * spaceBetweenImages + 50f)).toInt()
                 topMargin = screenHeight - pieceHeight - pieceMargin
@@ -251,7 +275,8 @@ class GameActivity : AppCompatActivity() {
         }
         beetleimage.load("https://live.staticflickr.com/65535/54186070149_53971b6722_o.png")
         binding.root.addView(beetleimage)
-        val spiderimage = ImageView(this).apply {
+
+        spiderimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
                 leftMargin = ((3 * spaceBetweenImages + 50f)).toInt()
                 topMargin = screenHeight - pieceHeight - pieceMargin
@@ -260,7 +285,8 @@ class GameActivity : AppCompatActivity() {
         }
         spiderimage.load("https://live.staticflickr.com/65535/54186070144_b4d5a18628_o.png")
         binding.root.addView(spiderimage)
-        val grasshopperimage = ImageView(this).apply {
+
+        grasshopperimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
                 leftMargin = ((4 * spaceBetweenImages + 50f)).toInt()
                 topMargin = screenHeight - pieceHeight - pieceMargin
