@@ -10,7 +10,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
-import com.bignerdranch.andriod.hivenet.dataclasses.HexSpace
 import kotlin.math.min
 import kotlin.math.sqrt
 
@@ -18,9 +17,8 @@ class HexagonGridLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
 
-
+    inner class Hex(var image: ImageView, var piece: String?)
     private var hexagonSpacing: Float
-
     private val margin = 50
     private val r = 7
     private val c = 7
@@ -36,13 +34,8 @@ class HexagonGridLayout @JvmOverloads constructor(
         arrayOfNulls(7)
     )
     var hexagonHeight: Float
-
-
     var hexagonWidth: Float
     init {
-
-        // on below line we are getting metrics
-        // for display using window manager.
         val windowManager = context.getSystemService(WINDOW_SERVICE) as WindowManager
         val height = windowManager.currentWindowMetrics.bounds.height()
         val width = windowManager.currentWindowMetrics.bounds.width()
@@ -56,7 +49,6 @@ class HexagonGridLayout @JvmOverloads constructor(
 
         } else {
             initializeHexagons()
-            Log.d(TAG, "0,0: " + hexagonImages[0][0]?.hexSpace?.hsToString())
         }
     }
     companion object {
@@ -65,103 +57,54 @@ class HexagonGridLayout @JvmOverloads constructor(
     private fun initializeHexagons() {
         val rows = r
         val columns = c
-        val xOffset = (0.759 * hexagonHeight) + hexagonSpacing // Horizontal offset for hexagons
-        val yOffset = hexagonHeight + hexagonSpacing // Vertical offset for hexagons
+        val xOffset = (0.759 * hexagonHeight) + hexagonSpacing
+        val yOffset = hexagonHeight + hexagonSpacing
         for (row in 0 until rows ) {
             for (col in 0 until columns) {
 
                 val x = col * xOffset + margin
                 var y = row * yOffset + margin
 
-                // Adjust every other column to create a hexagonal staggered layout
                 if (col % 2 == 1) {
                     y += yOffset / 2
                 }
 
-                // Create ImageView for hexagon and add it to the layout
                 val hexagonImage = ImageView(context).apply {
-                    setImageResource(R.drawable.hexagon) // Use hexagon.png from drawables
+                    setImageResource(R.drawable.hexagon)
                     layoutParams = LayoutParams(hexagonWidth.toInt() , hexagonHeight.toInt())
                     this.x = x.toFloat()
                     this.y = y
                     tag="hex"
                 }
-                val hex = Hex(hexagonImage, row, col, HexSpace(row, col))
+                val hex = Hex(hexagonImage, null)
                 hexagonImages[row][col] = hex
                 addView(hexagonImage)
-
-
-            }
-        }
-        for (row in 0 until rows) {
-            for (col in 0 until columns) {
-                val hex = hexagonImages[row][col]
-                if (row > 0) {
-                    hex?.hexSpace?.top = hexagonImages[row - 1][col]?.hexSpace
-                }
-                if (row < rows - 1) {
-                    hex?.hexSpace?.bottom = hexagonImages[row + 1][col]?.hexSpace
-                }
-                if (col % 2 == 0) {
-//                    // higher ones
-//                    if ((col > 0) && (row > 0)) {
-//                        hex?.hexSpace?.topLeft = hexagonImages[row - 1][col - 1]?.hexSpace
-//                    }
-                    if (col > 0) {
-                        if (row > 0) {
-                            hex?.hexSpace?.topLeft = hexagonImages[row - 1][col - 1]?.hexSpace
-                        }
-                        if (row < rows - 1) {
-                            hex?.hexSpace?.bottomLeft = hexagonImages[row][col - 1]?.hexSpace
-                        }
-                    }
-                    if (col < columns - 1) {
-                        if (row > 0) {
-                            hex?.hexSpace?.topRight = hexagonImages[row - 1][col + 1]?.hexSpace
-                        }
-                        if (row < rows - 1) {
-                            hex?.hexSpace?.bottomRight = hexagonImages[row][col + 1]?.hexSpace
-                        }
-                    }
-                }
-                else {
-                    // lower ones
-                    hex?.hexSpace?.topRight = hexagonImages[row][col + 1]?.hexSpace
-                    hex?.hexSpace?.topLeft = hexagonImages[row][col - 1]?.hexSpace
-                    if (row < rows - 1) {
-                        hex?.hexSpace?.bottomRight = hexagonImages[row + 1][col + 1]?.hexSpace
-                        hex?.hexSpace?.bottomLeft = hexagonImages[row + 1][col - 1]?.hexSpace
-                    }
-
-                }
             }
         }
     }
     private fun initializeHexagonsLandscape() {
         val rows = c
         val columns = r
-        val xOffset = (0.82 * hexagonHeight) + hexagonSpacing // Horizontal offset for hexagons
-        val yOffset = hexagonHeight // Vertical offset for hexagons
+        val xOffset = (0.82 * hexagonHeight) + hexagonSpacing
+        val yOffset = hexagonHeight
 
         for (row in 0 until rows) {
             for (col in 0 until columns ) {
                 var x = col * xOffset + margin
                 val y = row * yOffset + margin
 
-                // Adjust every other row to create a hexagonal staggered layout
                 if (row % 2 == 1) {
                     x += yOffset / 2
                 }
 
-                // Create ImageView for hexagon and add it to the layout
                 val hexagonImage = ImageView(context).apply {
-                    setImageResource(R.drawable.hexagonlandscape) // Use hexagon.png from drawables
+                    setImageResource(R.drawable.hexagonlandscape)
                     layoutParams = LayoutParams(hexagonWidth.toInt(), hexagonHeight.toInt())
                     this.x = x.toFloat()
                     this.y = y
                     tag="hex"
                 }
-                val hex = Hex(hexagonImage, row, col, HexSpace(row, col))
+                val hex = Hex(hexagonImage, null)
                 hexagonImages[row][col] = hex
                 addView(hexagonImage)
             }
@@ -180,21 +123,25 @@ class HexagonGridLayout @JvmOverloads constructor(
     fun getHex(row: Int, column: Int): Hex? {
         return hexagonImages[row][column]
     }
-    // Find the closest cell for an image being dragged
     fun findClosestCell(view: View): ImageView? {
         Log.d(TAG, "bug is at x: ${view.x}, y: ${view.y}")
         val closestHexagon = hexagonImages.flatten().filterNotNull().minByOrNull { hexagonImage ->
             val dx = view.x - hexagonImage.image.x
             val dy = view.y - hexagonImage.image.y
-            val distance = sqrt(dx * dx + dy * dy) // Calculate distance to each hexagon center
+            val distance = sqrt(dx * dx + dy * dy)
             distance
         }
+
         if (closestHexagon != null) {
+            val dx = view.x - closestHexagon.image.x
+            val dy = view.y - closestHexagon.image.y
+            val distance = sqrt(dx * dx + dy * dy)
+            if (distance > hexagonHeight * 2 || closestHexagon.piece != null) {
+                return null
+            }
             Log.d(TAG, "x: ${closestHexagon.image.x}, y: ${closestHexagon.image.y}")
         }
+        closestHexagon?.piece = view.tag.toString()
         return closestHexagon?.image
-    }
-
-     inner class Hex(var image: ImageView, var row: Int, var column: Int, var hexSpace: HexSpace) {
     }
 }

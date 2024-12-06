@@ -20,9 +20,9 @@ import android.widget.RelativeLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.marginLeft
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
+import coil3.load
 import com.bignerdranch.andriod.hivenet.databinding.ActivityGameBinding
 import kotlin.math.min
 
@@ -55,21 +55,19 @@ class GameActivity : AppCompatActivity() {
         private const val TAG = "GameActivity"
     }
 
-    fun movePiece(startRow: Int, startCol: Int, endRow: Int, endCol: Int) {
-        val piece = hexagonGridLayout.getHex(startRow, startCol)?.hexSpace?.hivePiece
+    /*fun movePiece(startRow: Int, startCol: Int, endRow: Int, endCol: Int) {
+        val piece = hexagonGridLayout.getHex(startRow, startCol)?.piece
         val newLocation = hexagonGridLayout.getHex(endRow, endCol)?.image
         if (piece != null && newLocation != null) {
-//            val layoutParams = piece.layoutParams as RelativeLayout.LayoutParams
+            val layoutParams = piece.layoutParams as RelativeLayout.LayoutParams
 
-            // Update the position using the closest cell's coordinates
-//            layoutParams.leftMargin = newLocation.x.toInt()
-//            layoutParams.topMargin = newLocation.y.toInt()
-//
-//            // Apply the updated layout params to the view
-//            piece.layoutParams = layoutParams
+            layoutParams.leftMargin = newLocation.x.toInt()
+            layoutParams.topMargin = newLocation.y.toInt()
+
+            piece.layoutParams = layoutParams
             binding.root.invalidate()
         }
-    }
+    }*/
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,8 +75,6 @@ class GameActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // Initialize hexagonal grid layout
-        // Initialize hexagonal grid layout
         hexagonGridLayout = HexagonGridLayout(this).apply {
             layoutParams = RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
@@ -86,18 +82,17 @@ class GameActivity : AppCompatActivity() {
             )
         }
         binding.root.addView(hexagonGridLayout)
-        // Add an initial image to be draggable
         addPieces()
-        // Set up drag helper for interaction
         dragHelper = ViewDragHelper.create(binding.root as ViewGroup, 1.0f, DragHelperCallback())
 
 
     }
+
     override fun onStart() {
         super.onStart()
-        // Bind to the same ConnectionService instance
         val intent = Intent(this, ConnectionService::class.java)
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+
     }
 
     override fun onStop() {
@@ -114,22 +109,18 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun createCopyOfImage(original: View, x: Float, y: Float) {
-        // Create the copy
         val copy = ImageView(this).apply {
             setImageDrawable((original as ImageView).drawable)
             layoutParams = RelativeLayout.LayoutParams((hexagonGridLayout.hexagonWidth * .8).toInt(), (hexagonGridLayout.hexagonHeight * .8).toInt()).apply {
                 topMargin = y.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
                 leftMargin = x.toInt() + (hexagonGridLayout.hexagonHeight * .1).toInt()
             }
-            tag = "copy" // Mark as a copy
+            tag = "copy"
         }
 
-        // Add the copy to the parent layout
         binding.root.addView(copy)
-        //copy.bringToFront()
     }
 
-    // Adds draggable images to the bottom of the screen, spaced evenly
     private fun addPieces() {
         val screenHeight = resources.displayMetrics.heightPixels
         val screenWidth = resources.displayMetrics.widthPixels
@@ -141,18 +132,53 @@ class GameActivity : AppCompatActivity() {
             addPiecesLandscape(screenHeight, pieceHeight, drawableIds)
             return
         }
-        val spaceBetweenImages = screenWidth / 5 // To space the images evenly
+        val spaceBetweenImages = screenWidth / 5
 
-        drawableIds.forEachIndexed { index, drawableId ->
-            val image = ImageView(this).apply {
-                setImageResource(drawableId)
-                layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
-                    leftMargin = ((index * spaceBetweenImages + 50f)).toInt()
-                    topMargin = screenHeight - pieceHeight - 50 // Fixed bottom margin to align the images at the bottom
-                }
+        val antimage = ImageView(this).apply {
+            layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
+                leftMargin = 0
+                topMargin = screenHeight - pieceHeight - 50
             }
-            binding.root.addView(image)
+            tag="ant"
         }
+        antimage.load("https://live.staticflickr.com/65535/54185775751_d4f032bff7_o.png")
+        binding.root.addView(antimage)
+        val beeimage = ImageView(this).apply {
+            layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
+                leftMargin = ((1 * spaceBetweenImages + 50f)).toInt()
+                topMargin = screenHeight - pieceHeight - 50
+            }
+            tag="bee"
+        }
+        beeimage.load("https://live.staticflickr.com/65535/54186070154_624f975422_o.png")
+        binding.root.addView(beeimage)
+        val beetleimage = ImageView(this).apply {
+            layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
+                leftMargin = ((2 * spaceBetweenImages + 50f)).toInt()
+                topMargin = screenHeight - pieceHeight - 50
+            }
+            tag="beetle"
+        }
+        beetleimage.load("https://live.staticflickr.com/65535/54186070149_53971b6722_o.png")
+        binding.root.addView(beetleimage)
+        val spiderimage = ImageView(this).apply {
+            layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
+                leftMargin = ((3 * spaceBetweenImages + 50f)).toInt()
+                topMargin = screenHeight - pieceHeight - 50
+            }
+            tag="spider"
+        }
+        spiderimage.load("https://live.staticflickr.com/65535/54186070144_b4d5a18628_o.png")
+        binding.root.addView(spiderimage)
+        val grasshopperimage = ImageView(this).apply {
+            layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
+                leftMargin = ((4 * spaceBetweenImages + 50f)).toInt()
+                topMargin = screenHeight - pieceHeight - 50
+            }
+            tag="grasshopper"
+        }
+        grasshopperimage.load("https://live.staticflickr.com/65535/54184902322_e4f08c8428_o.png")
+        binding.root.addView(grasshopperimage)
     }
     private fun addPiecesLandscape(screenHeight: Int, pieceHeight: Int, drawableIds: List<Int>) {
         val spaceBetweenImages = screenHeight / 5
@@ -160,7 +186,6 @@ class GameActivity : AppCompatActivity() {
             val image = ImageView(this).apply {
                 setImageResource(drawableId)
                 layoutParams = ConstraintLayout.LayoutParams(pieceHeight, pieceHeight).apply {
-                    // Constrain images to the bottom, spaced evenly
                     topToTop = binding.root.id
                     rightToRight = binding.root.id
                     marginStart = (index * spaceBetweenImages + 50f).toInt()
@@ -172,10 +197,7 @@ class GameActivity : AppCompatActivity() {
         }
     }
     private inner class DragHelperCallback : ViewDragHelper.Callback() {
-        private var originalX = 0f
-        private var originalY = 0f
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
-            // Only capture images that are outside the hexagon grid
             if (child.tag == "hex") {
                 return false
             }
@@ -183,48 +205,38 @@ class GameActivity : AppCompatActivity() {
         }
 
         override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
-            // Constrain dragging horizontally within the bounds of the root layout
             return left.coerceIn(0, binding.root.width - child.width)
         }
 
         override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
-            // Constrain dragging vertically within the bounds of the root layout
             return top.coerceIn(0, binding.root.height - child.height)
         }
 
         override fun onViewCaptured(capturedChild: View, pointerId: Int) {
-            // Save the original position before the drag begins
-            originalX = capturedChild.x
-            originalY = capturedChild.y
             capturedChild.bringToFront()
         }
 
         override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
             Log.d(TAG, "onViewReleased: Released child at (${releasedChild.x}, ${releasedChild.y})")
-
             val closestCell = hexagonGridLayout.findClosestCell(releasedChild)
 
             if (closestCell != null) {
                 if (releasedChild.tag == "copy") {
                     val layoutParams = releasedChild.layoutParams as RelativeLayout.LayoutParams
 
-                    // Update the position using the closest cell's coordinates
-                    layoutParams.leftMargin = closestCell.x.toInt()
-                    layoutParams.topMargin = closestCell.y.toInt()
+                    layoutParams.leftMargin = closestCell.x.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
+                    layoutParams.topMargin = closestCell.y.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
 
-                    // Apply the updated layout params to the view
                     releasedChild.layoutParams = layoutParams
                     binding.root.invalidate()
                 }
                 else {
                     createCopyOfImage(releasedChild, closestCell.x, closestCell.y)
-                    dragHelper.settleCapturedViewAt(originalX.toInt(), originalY.toInt())
                 }
+            } else {
+                binding.root.requestLayout()
+                binding.root.invalidate()
             }
-            //releasedChild.bringToFront()
-            // Redraw the layout to reflect position changes
-
         }
     }
-
 }
