@@ -37,11 +37,11 @@ class MyReceiver(
         when (action) {
             WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION -> {
                 val state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, WifiP2pManager.WIFI_P2P_STATE_DISABLED)
-                if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                    Toast.makeText(context, "Wi-Fi P2P is enabled", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "Wi-Fi P2P is disabled", Toast.LENGTH_SHORT).show()
-                }
+//                if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
+//                    Toast.makeText(context, "Wi-Fi P2P is enabled", Toast.LENGTH_SHORT).show()
+//                } else {
+//                    Toast.makeText(context, "Wi-Fi P2P is disabled", Toast.LENGTH_SHORT).show()
+//                }
             }
             WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
                 val device = intent.getParcelableExtra(EXTRA_WIFI_P2P_DEVICE, WifiP2pDevice::class.java)

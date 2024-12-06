@@ -143,7 +143,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun onGameOver(winner: String) {
-        Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
         Snackbar.make(binding.root.rootView, "Game Over!", Snackbar.LENGTH_INDEFINITE).setAction("SHARE", {
             val bitmap = Bitmap.createBitmap(binding.imageView.width, binding.imageView.height, Bitmap.Config.ARGB_8888)
             val locationOfViewInWindow = IntArray(2)

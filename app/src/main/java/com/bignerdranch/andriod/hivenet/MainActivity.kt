@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
         service!!.discoverPeers()
 
         // Show a toast to indicate that discovery has started
-        Toast.makeText(this, "Discovering peers...", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "Discovering peers...", Toast.LENGTH_SHORT).show()
     }
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -143,13 +143,13 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Permissions are required to connect", Toast.LENGTH_SHORT).show()
-            }
-        }
+//        if (requestCode == PERMISSION_REQUEST_CODE) {
+//            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+//                Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(this, "Permissions are required to connect", Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
     private val permissionReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity() {
             if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] != true ||
                 permissions[Manifest.permission.NEARBY_WIFI_DEVICES] != true)
             {
-                Toast.makeText(this, "Permissions not granted.", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this, "Permissions not granted.", Toast.LENGTH_SHORT).show()
             }
         }
     private fun hasRequiredPermissions(): Boolean {
