@@ -218,7 +218,7 @@ class GameActivity : AppCompatActivity() {
             }
             tag = "copy"
         }
-        hexagonGridLayout.placePiece(closestCell, copy, !nextTurn)
+        hexagonGridLayout.placePiece(closestCell, copy, nextTurn)
         binding.root.addView(copy)
     }
     private fun tintRed(view: ImageView) {
@@ -340,7 +340,7 @@ class GameActivity : AppCompatActivity() {
 
             if (closestCell != null) {
                 if (releasedChild.tag == "copy") {
-                    hexagonGridLayout.removePiece(releasedChild)
+                    var black = hexagonGridLayout.removePiece(releasedChild)
                     val layoutParams = releasedChild.layoutParams as RelativeLayout.LayoutParams
 
                     layoutParams.leftMargin = closestCell.image.x.toInt() + (hexagonGridLayout.hexagonWidth * .1).toInt()
@@ -364,7 +364,7 @@ class GameActivity : AppCompatActivity() {
                     }
                     binding.root.invalidate()
 
-                    hexagonGridLayout.placePiece(closestCell, releasedChild, nextTurn)
+                    hexagonGridLayout.placePiece(closestCell, releasedChild, black!!)
                 }
                 else {
                     createCopyOfImage(releasedChild, closestCell)

@@ -147,12 +147,14 @@ class HexagonGridLayout @JvmOverloads constructor(
         return closestHexagon
     }
 
-    fun removePiece(releasedChild: ImageView) {
+    fun removePiece(releasedChild: ImageView): Boolean? {
         val hex = hexagonImages.flatten().filterNotNull().find {
             it.piece == releasedChild
         }
+        val original = hex?.black
         hex?.piece = null
         hex?.black = null
+        return original
     }
     fun placePiece(hex: Hex, piece: ImageView, black: Boolean) {
         hex.piece = piece
