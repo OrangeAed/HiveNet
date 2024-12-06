@@ -103,6 +103,10 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+    fun onGameOver() {
+
+    }
+
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
         event?.let { dragHelper.processTouchEvent(it) }
         return super.dispatchTouchEvent(event)
@@ -128,6 +132,7 @@ class GameActivity : AppCompatActivity() {
         val pieceHeight = min(450, (boardHeight - 50 * 2 - 40)/5 ).toInt()
         val drawableIds = listOf(R.drawable.ant, R.drawable.bee, R.drawable.beetle, R.drawable.grasshopper, R.drawable.spider)
         val landscape = resources.configuration.orientation == ORIENTATION_LANDSCAPE
+        val pieceMargin = screenHeight / 12
         if (landscape) {
             addPiecesLandscape(screenHeight, pieceHeight, drawableIds)
             return
@@ -137,7 +142,7 @@ class GameActivity : AppCompatActivity() {
         val antimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
                 leftMargin = 0
-                topMargin = screenHeight - pieceHeight - 50
+                topMargin = screenHeight - pieceHeight - pieceMargin
             }
             tag="ant"
         }
@@ -146,7 +151,7 @@ class GameActivity : AppCompatActivity() {
         val beeimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
                 leftMargin = ((1 * spaceBetweenImages + 50f)).toInt()
-                topMargin = screenHeight - pieceHeight - 50
+                topMargin = screenHeight - pieceHeight - pieceMargin
             }
             tag="bee"
         }
@@ -155,7 +160,7 @@ class GameActivity : AppCompatActivity() {
         val beetleimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
                 leftMargin = ((2 * spaceBetweenImages + 50f)).toInt()
-                topMargin = screenHeight - pieceHeight - 50
+                topMargin = screenHeight - pieceHeight - pieceMargin
             }
             tag="beetle"
         }
@@ -164,7 +169,7 @@ class GameActivity : AppCompatActivity() {
         val spiderimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
                 leftMargin = ((3 * spaceBetweenImages + 50f)).toInt()
-                topMargin = screenHeight - pieceHeight - 50
+                topMargin = screenHeight - pieceHeight - pieceMargin
             }
             tag="spider"
         }
@@ -173,7 +178,7 @@ class GameActivity : AppCompatActivity() {
         val grasshopperimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
                 leftMargin = ((4 * spaceBetweenImages + 50f)).toInt()
-                topMargin = screenHeight - pieceHeight - 50
+                topMargin = screenHeight - pieceHeight - pieceMargin
             }
             tag="grasshopper"
         }
