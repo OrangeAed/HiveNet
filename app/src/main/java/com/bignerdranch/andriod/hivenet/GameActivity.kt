@@ -137,11 +137,11 @@ class GameActivity : AppCompatActivity() {
             addPiecesLandscape(screenHeight, pieceHeight, drawableIds)
             return
         }
-        val spaceBetweenImages = screenWidth / 5
+        val spaceBetweenImages = (screenWidth - 100) / 5
 
         val antimage = ImageView(this).apply {
             layoutParams = RelativeLayout.LayoutParams(pieceHeight, pieceHeight).apply {
-                leftMargin = 0
+                leftMargin = 50
                 topMargin = screenHeight - pieceHeight - pieceMargin
             }
             tag="ant"
