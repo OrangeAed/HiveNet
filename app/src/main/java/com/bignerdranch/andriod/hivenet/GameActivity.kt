@@ -20,6 +20,7 @@ import android.widget.RelativeLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
 import coil3.load
 import com.bignerdranch.andriod.hivenet.databinding.ActivityGameBinding
@@ -193,6 +194,8 @@ class GameActivity : AppCompatActivity() {
     private inner class DragHelperCallback : ViewDragHelper.Callback() {
         private var originalX = 0f
         private var originalY = 0f
+        private var originalLeft = 0
+        private var originalTop = 0
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             if (child.tag == "hex") {
                 return false
@@ -212,6 +215,8 @@ class GameActivity : AppCompatActivity() {
             originalX = capturedChild.x
             originalY = capturedChild.y
             capturedChild.bringToFront()
+            originalLeft = capturedChild.left
+            originalTop = capturedChild.top
         }
 
         override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
@@ -230,8 +235,10 @@ class GameActivity : AppCompatActivity() {
                 }
                 else {
                     createCopyOfImage(releasedChild, closestCell.x, closestCell.y)
-                    dragHelper.settleCapturedViewAt(originalX.toInt(), originalY.toInt())
                 }
+            } else {
+                binding.root.requestLayout()
+                binding.root.invalidate()
             }
         }
     }
