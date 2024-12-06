@@ -123,9 +123,116 @@ class HexagonGridLayout @JvmOverloads constructor(
         addView(imageView) // Add the image to the layout
     }*/
 
+    fun getHexagonImages(): Array<Array<Hex?>> {
+        return hexagonImages
+    }
+
     fun getHex(row: Int, column: Int): Hex? {
         return hexagonImages[row][column]
     }
+
+    fun getHexTop(row: Int, column: Int): Hex? {
+        // returns the hexagon above the given hexagon, or null if it doesn't exist
+        if (row == 0) {
+            return null
+        }
+        return hexagonImages[row - 1][column]
+    }
+
+    fun getHexBottom(row: Int, column: Int): Hex? {
+        // returns the hexagon below the given hexagon, or null if it doesn't exist
+        if (row == hexagonImages.size - 1) {
+            return null
+        }
+        return hexagonImages[row + 1][column]
+    }
+
+    fun getHexTopLeft(row: Int, column: Int): Hex? {
+        // returns the hexagon above and to the left of the given hexagon, or null if it doesn't exist
+        if (column == 0) {
+            return null
+        }
+        if (row % 2 == 0)  {
+            if (row == 0) {
+                return null
+            }
+            return hexagonImages[row - 1][column - 1]
+        }
+        return hexagonImages[row][column - 1]
+    }
+
+    fun getHexTopRight(row: Int, column: Int): Hex? {
+        // returns the hexagon above and to the right of the given hexagon, or null if it doesn't exist
+        if (column == hexagonImages[row].size - 1) {
+            // if it is the last column, there is no hexagon to the right
+            return null
+        }
+        if (row % 2 == 0) {
+            //if it is a hexagon that is upper
+            if (row == 0) {
+                return null
+            }
+            return hexagonImages[row - 1][column + 1]
+        }
+        return hexagonImages[row][column + 1]
+    }
+
+    fun getHexBottomLeft(row: Int, column: Int): Hex? {
+        // returns the hexagon below and to the left of the given hexagon, or null if it doesn't exist
+        if (column == 0) {
+            return null
+        }
+        if (row % 2 == 0) {
+            return hexagonImages[row][column - 1]
+        }
+        else {
+            if (row == hexagonImages.size - 1) {
+                return null
+            }
+        }
+        return hexagonImages[row + 1][column - 1]
+    }
+
+    fun getHexBottomRight(row: Int, column: Int): Hex? {
+        // returns the hexagon below and to the right of the given hexagon, or null if it doesn't exist
+        if (column == hexagonImages[row].size - 1) {
+            return null
+        }
+        if (row % 2 == 0) {
+            return hexagonImages[row][column + 1]
+        }
+        else {
+            if (row == hexagonImages.size - 1) {
+                return null
+            }
+        }
+        return hexagonImages[row + 1][column + 1]
+    }
+
+    fun isHexSurrounded(row: Int, column: Int): Boolean {
+        // returns true if the hexagon at the given row and column is surrounded by other images or
+        // if the hexagon is on the edge of the board
+        if (getHexTop(row, column) != null && getHexTop(row, column)?.piece == null ) {
+            return false
+        }
+        if (getHexBottom(row, column) != null && getHexBottom(row, column)?.piece == null) {
+            return false
+        }
+        if (getHexTopLeft(row, column) != null && getHexTopLeft(row, column)?.piece == null) {
+            return false
+        }
+        if (getHexTopRight(row, column) != null && getHexTopRight(row, column)?.piece == null) {
+            return false
+        }
+        if (getHexBottomLeft(row, column) != null && getHexBottomLeft(row, column)?.piece == null) {
+            return false
+        }
+        if (getHexBottomRight(row, column) != null && getHexBottomRight(row, column)?.piece == null) {
+            return false
+        }
+        return true
+    }
+
     fun findClosestCell(view: ImageView): Hex? {
         Log.d(TAG, "bug is at x: ${view.x}, y: ${view.y}")
         val closestHexagon = hexagonImages.flatten().filterNotNull().minByOrNull { hexagonImage ->

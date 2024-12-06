@@ -127,7 +127,27 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    fun onGameOver(winner: String) {
+    fun isGameOver() {
+        // find the queens
+        for (row in 0 until 7) {
+            for (col in 0 until 7){
+                if (hexagonGridLayout.getHex(row, col)?.piece?.tag == "queen") {
+                    if (hexagonGridLayout.isHexSurrounded(row, col)) {
+                        // game over
+//                        onGameOver(hexagonGridLayout.getHex(row, col)?.piece?.color ?: "No one")
+                        if (hexagonGridLayout.getHex(row, col)?.black == true) {
+                            onGameOver("Black")
+                        } else {
+                            this.onGameOver("Red")
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    private fun onGameOver(winner: String) {
         Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
         Snackbar.make(binding.root.rootView, "Game Over!", Snackbar.LENGTH_INDEFINITE).setAction("SHARE", {
             val bitmap = Bitmap.createBitmap(binding.imageView.width, binding.imageView.height, Bitmap.Config.ARGB_8888)
@@ -373,6 +393,7 @@ class GameActivity : AppCompatActivity() {
                 binding.root.requestLayout()
                 binding.root.invalidate()
             }
+            isGameOver()
         }
     }
 }
