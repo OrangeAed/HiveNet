@@ -10,7 +10,8 @@ android {
 
     defaultConfig {
         applicationId = "com.bignerdranch.andriod.hivenet"
-        minSdk = 33
+        minSdk = 34
+        //noinspection OldTargetApi
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -56,6 +57,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.cronet.api)
+    implementation(libs.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

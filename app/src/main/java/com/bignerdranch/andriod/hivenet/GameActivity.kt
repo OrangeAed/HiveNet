@@ -3,28 +3,50 @@ package com.bignerdranch.andriod.hivenet
 import MyReceiver
 import android.content.BroadcastReceiver
 import android.content.ComponentName
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
+import android.graphics.Bitmap
+import android.graphics.Rect
+import android.net.Uri
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
+import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
+import android.view.PixelCopy
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.FileProvider.getUriForFile
+import androidx.core.net.toUri
 import androidx.customview.widget.ViewDragHelper
+import androidx.lifecycle.lifecycleScope
 import coil3.load
 import com.bignerdranch.andriod.hivenet.databinding.ActivityGameBinding
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.security.AccessController.getContext
 import kotlin.math.min
+
 
 class GameActivity : AppCompatActivity() {
     private lateinit var hexagonGridLayout: HexagonGridLayout
@@ -85,7 +107,6 @@ class GameActivity : AppCompatActivity() {
         addPieces()
         dragHelper = ViewDragHelper.create(binding.root as ViewGroup, 1.0f, DragHelperCallback())
 
-
     }
 
     override fun onStart() {
@@ -103,8 +124,59 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    fun onGameOver() {
+    fun onGameOver(winner: String) {
+        Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
+        Snackbar.make(binding.root.rootView, "Game Over!", Snackbar.LENGTH_INDEFINITE).setAction("SHARE", {
+            val bitmap = Bitmap.createBitmap(binding.imageView.width, binding.imageView.height, Bitmap.Config.ARGB_8888)
+            val locationOfViewInWindow = IntArray(2)
+            binding.imageView.getLocationInWindow(locationOfViewInWindow)
+            try {
+                PixelCopy.request(
+                    window,
+                    Rect(
+                        locationOfViewInWindow[0],
+                        locationOfViewInWindow[1],
+                        locationOfViewInWindow[0] + binding.imageView.width,
+                        locationOfViewInWindow[1] + binding.imageView.height
+                    ), bitmap, {result ->
+                        if (result == PixelCopy.SUCCESS) {
+                            Log.d(TAG,"Created Screenshot")
+                            lifecycleScope.launch {
+                                try {
+                                    saveBitmap("screenshot.png", bitmap)
+                                } catch (_: IOException) {
+                                }
+                            }
+                        } 
+                               },
+                    Handler(Looper.getMainLooper())
+                )
 
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
+            }
+            val imagePath = File(filesDir, "screenshot.png")
+            val contentUri: Uri = getUriForFile(binding.root.context, "com.bignerdranch.andriod.hivenet.fileprovider", imagePath)
+            val reportIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "image/*"
+                putExtra(Intent.EXTRA_TEXT, "Winner is $winner")
+                putExtra(Intent.EXTRA_STREAM, contentUri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+            }
+
+            val chooserIntent = Intent.createChooser(
+                reportIntent,
+                "Where to send?"
+            )
+            startActivity(chooserIntent)
+        }).show()
+    }
+    private suspend fun saveBitmap(fileName: String, bitmap: Bitmap) = withContext(Dispatchers.IO) {
+        val file = File(filesDir, fileName)
+        file.outputStream().use {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
     }
 
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
