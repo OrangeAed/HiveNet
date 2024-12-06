@@ -42,18 +42,17 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var service: ConnectionService
+    private var service: ConnectionService? = null
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            if (binder is ConnectionService.LocalBinder) {
-                service = binder.getService()
-                isBound = true
-                receiver = MyReceiver(service)
-                registerReceiver(
-                    receiver,
-                    IntentFilter(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
-                )
-            }
+            val binder2 = binder as ConnectionService.LocalBinder
+            service = binder2.getService()
+            isBound = true
+            receiver = MyReceiver(service!!)
+            registerReceiver(
+                receiver,
+                IntentFilter(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
+            )
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -94,16 +93,17 @@ class MainActivity : AppCompatActivity() {
             discoverPeers()
         }
         binding.sendData.setOnClickListener {
-            service.sendObject("Hello!")
+            service?.sendObject("Hello!")
         }
     }
     fun sendObject(gameMessage: Any) {
-        service.sendObject(gameMessage)
+        service!!.sendObject(gameMessage)
     }
 
 
     override fun onStart() {
         super.onStart()
+        Log.d(TAG, "ON START CALLED")
         val intent = Intent(this, ConnectionService::class.java)
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
@@ -134,10 +134,10 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun discoverPeers() {
         // Start the peer discovery process by requesting peers from WifiP2pManager
-        service.requestPeers()
+        service!!.discoverPeers()
 
         // Show a toast to indicate that discovery has started
-        Toast.makeText(this, "Discovering peers...", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "Discovering peers...", Toast.LENGTH_SHORT).show()
     }
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -145,13 +145,13 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Permissions are required to connect", Toast.LENGTH_SHORT).show()
-            }
-        }
+//        if (requestCode == PERMISSION_REQUEST_CODE) {
+//            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+//                Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(this, "Permissions are required to connect", Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
     private val permissionReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -173,7 +173,7 @@ class MainActivity : AppCompatActivity() {
             if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] != true ||
                 permissions[Manifest.permission.NEARBY_WIFI_DEVICES] != true)
             {
-                Toast.makeText(this, "Permissions not granted.", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this, "Permissions not granted.", Toast.LENGTH_SHORT).show()
             }
         }
     private fun hasRequiredPermissions(): Boolean {
@@ -189,7 +189,6 @@ class MainActivity : AppCompatActivity() {
         const val PERMISSION_REQUEST_CODE = 1001
         const val SERVER_PORT = 8888
     }
-
 
 
 }

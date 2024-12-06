@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.2"
+coilCompose = "3.0.4"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -12,8 +13,11 @@ constraintlayout = "2.2.0"
 playServicesCronet = "18.1.0"
 cronetApi = "119.6045.31"
 gson = "2.10.1"
+core = "1.46.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
 cronet-fallback = { module = "org.chromium.net:cronet-fallback" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -25,6 +29,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 play-services-cronet = { module = "com.google.android.gms:play-services-cronet", version.ref = "playServicesCronet" }
 cronet-api = { group = "org.chromium.net", name = "cronet-api", version.ref = "cronetApi" }
 gson = { module = "com.google.code.gson:gson", version = "2.10.1" }
+core = { group = "com.google.ar", name = "core", version.ref = "core" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

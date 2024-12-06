@@ -35,18 +35,19 @@ class ConnectionService : Service() {
     private var serverSocket: ServerSocket? = null
     private var inputReader: BufferedReader? = null
     private var outputWriter: BufferedWriter? = null
-    private val binder = LocalBinder()
     private lateinit var manager: WifiP2pManager
     private lateinit var channel: WifiP2pManager.Channel
     private lateinit var receiver: MyReceiver
     private val peers = mutableListOf<WifiP2pDevice>()
     private var connectionInfo: WifiP2pInfo? = null
+
+    private val binder = LocalBinder()
     inner class LocalBinder : Binder() {
         fun getService(): ConnectionService = this@ConnectionService
     }
 
-    override fun onBind(intent: Intent?): IBinder {
-        return LocalBinder()
+    override fun onBind(intent: Intent): IBinder {
+        return binder
     }
 
     override fun onCreate() {
@@ -63,8 +64,9 @@ class ConnectionService : Service() {
             addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
+            addAction(WifiP2pManager.EXTRA_WIFI_P2P_INFO)
         }
-        registerReceiver(receiver, filter)
+        registerReceiver(receiver, filter, RECEIVER_NOT_EXPORTED)
     }
 
     override fun onDestroy() {
@@ -87,6 +89,7 @@ class ConnectionService : Service() {
 
     private fun handleConnectionInfo(info: WifiP2pInfo) {
         // Handle the connection info, either start the server or client
+//        Toast.makeText(this, "Handling Connection info", Toast.LENGTH_SHORT).show()
         connectionInfo = info
         if (info.groupFormed) {
             if (info.isGroupOwner) {
@@ -98,6 +101,7 @@ class ConnectionService : Service() {
     }
 
     private fun startServerSocket() {
+//        Toast.makeText(this, "Starting Server Socket", Toast.LENGTH_SHORT).show()
         thread {
             try {
                 serverSocket = ServerSocket(SERVER_PORT)
@@ -112,6 +116,7 @@ class ConnectionService : Service() {
     }
 
     private fun startClientSocket(address: InetAddress) {
+//        Toast.makeText(this, "Starting Client Socket", Toast.LENGTH_SHORT).show()
         thread {
             try {
                 socket = Socket(address, SERVER_PORT)
@@ -123,6 +128,7 @@ class ConnectionService : Service() {
     }
 
     private fun initializeSocketStreams(clientSocket: Socket) {
+//        Toast.makeText(this, "Initializing Sockets", Toast.LENGTH_SHORT).show()
         socket = clientSocket
         inputReader = clientSocket.getInputStream().bufferedReader()
         outputWriter = clientSocket.getOutputStream().bufferedWriter()
@@ -130,12 +136,13 @@ class ConnectionService : Service() {
     }
 
     private fun listenForMessages() {
+//        Toast.makeText(this, "Listening for messages", Toast.LENGTH_SHORT).show()
         thread {
             try {
                 while (true) {
                     val receivedJson = inputReader?.readLine()
                     receivedJson?.let {
-                        Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+                        Log.d(TAG, "Received message: $it")
                     }
                 }
             } catch (e: IOException) {
@@ -160,7 +167,7 @@ class ConnectionService : Service() {
         }
     }
 
-    fun resetConnection() {
+    private fun resetConnection() {
         Log.d(TAG, "Resetting connection")
         try {
             socket?.close()
@@ -169,7 +176,7 @@ class ConnectionService : Service() {
             outputWriter = null
             socket = null
             serverSocket = null
-            Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
         } catch (e: IOException) {
             Log.e(TAG, "Error resetting connection: ${e.message}")
         }
@@ -179,8 +186,8 @@ class ConnectionService : Service() {
 
     }
     fun hasRequiredPermissions(): Boolean {
-        val locationPermission = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        val nearbyDevicesPermission = checkSelfPermission(android.Manifest.permission.NEARBY_WIFI_DEVICES) == PackageManager.PERMISSION_GRANTED
+        val locationPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val nearbyDevicesPermission = checkSelfPermission(Manifest.permission.NEARBY_WIFI_DEVICES) == PackageManager.PERMISSION_GRANTED
         return locationPermission && nearbyDevicesPermission
     }
 
@@ -190,7 +197,7 @@ class ConnectionService : Service() {
             sendBroadcast(intent)
         }
     }
-    @RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.NEARBY_WIFI_DEVICES])
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.NEARBY_WIFI_DEVICES])
     private fun connectToDevice(device: WifiP2pDevice) {
         if (!hasRequiredPermissions()) {
             checkAndBroadcastPermissions()
@@ -215,16 +222,45 @@ class ConnectionService : Service() {
             handleConnectionInfo(it)
         }
     }
-    @RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.NEARBY_WIFI_DEVICES])
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.NEARBY_WIFI_DEVICES])
     fun requestPeers() {
-        manager.requestPeers(channel) { peersList ->
-            peers.clear()
-            peers.addAll(peersList.deviceList)
-            Log.d(TAG, "Found ${peers.size} peers")
-            if (peers.isNotEmpty()) {
-                connectToDevice(peers.first())
+
+
+        val peerListListener = WifiP2pManager.PeerListListener { peerList ->
+            val refreshedPeers = peerList.deviceList
+            if (refreshedPeers != peers) {
+                peers.clear()
+                peers.addAll(refreshedPeers)
+                var device: WifiP2pDevice = peers[0]
+                for(peer in peers) {
+                    if (peer.deviceName in "Galaxy-S24") {
+                        Log.d(TAG,"Found Aedan")
+                        device = peer
+                    }
+                }
+                connectToDevice(device)
+            }
+
+            if (peers.isEmpty()) {
+                Log.d(TAG, "No devices found")
+                return@PeerListListener
+            } else {
+                Log.d(TAG, "Peers $peers")
             }
         }
+        manager.requestPeers(channel, peerListListener)
+    }
+
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.NEARBY_WIFI_DEVICES])
+    fun discoverPeers() {
+        manager.discoverPeers(channel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                Log.d(TAG, "Found peers")
+            }
+            override fun onFailure(reason: Int) {
+                Log.d(TAG, "Found peers")
+            }
+        })
     }
 
     companion object {
